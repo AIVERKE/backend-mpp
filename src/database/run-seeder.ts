@@ -9,7 +9,9 @@ async function run() {
   const seederPath = process.argv[2];
 
   if (!seederPath) {
-    console.error('Error: Debes proporcionar la ruta del seeder. Ejemplo: src/database/seed-1/initial.seeder.ts');
+    console.error(
+      'Error: Debes proporcionar la ruta del seeder. Ejemplo: src/database/seed-1/initial.seeder.ts',
+    );
     process.exit(1);
   }
 
@@ -30,10 +32,10 @@ async function run() {
   try {
     await dataSource.initialize();
     console.log('DataSource inicializado correctamente.');
-    
+
     await runSeeders(dataSource);
     console.log('Seed ejecutado con éxito.');
-    
+
     await dataSource.destroy();
     process.exit(0);
   } catch (error) {

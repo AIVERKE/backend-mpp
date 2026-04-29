@@ -14,10 +14,14 @@ export class ProcesosService {
   ) {}
 
   findAllProcesos() {
-    return this.procesoRepository.find({ relations: ['unidades', 'cargoProcesos'] });
+    return this.procesoRepository.find({
+      relations: ['unidades', 'cargoProcesos'],
+    });
   }
 
   findAllProcedimientos() {
-    return this.procedimientoRepository.find({ relations: ['proceso', 'instalaciones'] });
+    return this.procedimientoRepository.find({
+      relations: ['proceso', 'instalaciones'],
+    });
   }
 }

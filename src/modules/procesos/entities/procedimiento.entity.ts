@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { Proceso } from './proceso.entity';
 import { Unidad } from '../../estructura-organizacional/entities/unidad.entity';
 
@@ -38,7 +46,10 @@ export class Procedimiento {
   @ManyToMany(() => Unidad)
   @JoinTable({
     name: 'procedimiento_instalacion',
-    joinColumn: { name: 'id_procedimiento', referencedColumnName: 'id_procedimiento' },
+    joinColumn: {
+      name: 'id_procedimiento',
+      referencedColumnName: 'id_procedimiento',
+    },
     inverseJoinColumn: { name: 'id_unidad', referencedColumnName: 'id_unidad' },
   })
   instalaciones: Unidad[];

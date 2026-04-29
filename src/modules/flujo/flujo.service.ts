@@ -14,10 +14,14 @@ export class FlujoService {
   ) {}
 
   findAllOperaciones() {
-    return this.operacionRepository.find({ relations: ['procedimiento', 'operacionCargos', 'actividades'] });
+    return this.operacionRepository.find({
+      relations: ['procedimiento', 'operacionCargos', 'actividades'],
+    });
   }
 
   findAllActividades() {
-    return this.actividadRepository.find({ relations: ['operacion', 'tareas'] });
+    return this.actividadRepository.find({
+      relations: ['operacion', 'tareas'],
+    });
   }
 }

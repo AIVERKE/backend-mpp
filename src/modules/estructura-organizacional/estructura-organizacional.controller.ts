@@ -1,19 +1,120 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { EstructuraOrganizacionalService } from './estructura-organizacional.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { CreateCargoDto, UpdateCargoDto } from './dto/cargo.dto';
+import { CreateUnidadDto, UpdateUnidadDto } from './dto/unidad.dto';
 
 @ApiTags('Estructura Organizacional')
 @Controller('estructura-organizacional')
 export class EstructuraOrganizacionalController {
   constructor(private readonly service: EstructuraOrganizacionalService) {}
 
+  // --- Cargos ---
+
+  @Post('cargos')
+  @ApiOperation({ summary: 'Crear un nuevo cargo' })
+  @ApiResponse({ status: 201, description: 'Cargo creado exitosamente.' })
+  @ApiResponse({ status: 400, description: 'Datos inválidos.' })
+  createCargo(@Body() createCargoDto: CreateCargoDto) {
+    return this.service.createCargo(createCargoDto);
+  }
+
+  @Get('cargos')
+  @ApiOperation({ summary: 'Listar todos los cargos' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de cargos obtenida exitosamente.',
+  })
+  findAllCargos() {
+    return this.service.findAllCargos();
+  }
+
+  @Get('cargos/:id')
+  @ApiOperation({ summary: 'Obtener un cargo por ID' })
+  @ApiParam({ name: 'id', description: 'ID del cargo' })
+  @ApiResponse({ status: 200, description: 'Cargo encontrado.' })
+  @ApiResponse({ status: 404, description: 'Cargo no encontrado.' })
+  findOneCargo(@Param('id', ParseIntPipe) id: number) {
+    return this.service.findOneCargo(id);
+  }
+
+  @Patch('cargos/:id')
+  @ApiOperation({ summary: 'Actualizar un cargo por ID' })
+  @ApiParam({ name: 'id', description: 'ID del cargo' })
+  @ApiResponse({ status: 200, description: 'Cargo actualizado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Cargo no encontrado.' })
+  updateCargo(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCargoDto: UpdateCargoDto,
+  ) {
+    return this.service.updateCargo(id, updateCargoDto);
+  }
+
+  @Delete('cargos/:id')
+  @ApiOperation({ summary: 'Eliminar un cargo (Borrado lógico)' })
+  @ApiParam({ name: 'id', description: 'ID del cargo' })
+  @ApiResponse({ status: 200, description: 'Cargo eliminado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Cargo no encontrado.' })
+  removeCargo(@Param('id', ParseIntPipe) id: number) {
+    return this.service.removeCargo(id);
+  }
+
+  // --- Unidades ---
+
+  @Post('unidades')
+  @ApiOperation({ summary: 'Crear una nueva unidad' })
+  @ApiResponse({ status: 201, description: 'Unidad creada exitosamente.' })
+  @ApiResponse({ status: 400, description: 'Datos inválidos.' })
+  createUnidad(@Body() createUnidadDto: CreateUnidadDto) {
+    return this.service.createUnidad(createUnidadDto);
+  }
+
   @Get('unidades')
+  @ApiOperation({ summary: 'Listar todas las unidades' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de unidades obtenida exitosamente.',
+  })
   findAllUnidades() {
     return this.service.findAllUnidades();
   }
 
-  @Get('cargos')
-  findAllCargos() {
-    return this.service.findAllCargos();
+  @Get('unidades/:id')
+  @ApiOperation({ summary: 'Obtener una unidad por ID' })
+  @ApiParam({ name: 'id', description: 'ID de la unidad' })
+  @ApiResponse({ status: 200, description: 'Unidad encontrada.' })
+  @ApiResponse({ status: 404, description: 'Unidad no encontrada.' })
+  findOneUnidad(@Param('id', ParseIntPipe) id: number) {
+    return this.service.findOneUnidad(id);
+  }
+
+  @Patch('unidades/:id')
+  @ApiOperation({ summary: 'Actualizar una unidad por ID' })
+  @ApiParam({ name: 'id', description: 'ID de la unidad' })
+  @ApiResponse({ status: 200, description: 'Unidad actualizada exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Unidad no encontrada.' })
+  updateUnidad(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUnidadDto: UpdateUnidadDto,
+  ) {
+    return this.service.updateUnidad(id, updateUnidadDto);
+  }
+
+  @Delete('unidades/:id')
+  @ApiOperation({ summary: 'Eliminar una unidad (Borrado lógico)' })
+  @ApiParam({ name: 'id', description: 'ID de la unidad' })
+  @ApiResponse({ status: 200, description: 'Unidad eliminada exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Unidad no encontrada.' })
+  removeUnidad(@Param('id', ParseIntPipe) id: number) {
+    return this.service.removeUnidad(id);
   }
 }

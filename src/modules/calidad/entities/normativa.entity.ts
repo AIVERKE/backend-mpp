@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { Procedimiento } from '../../procesos/entities/procedimiento.entity';
 
 @Entity('Normativa')
@@ -25,7 +31,10 @@ export class Normativa {
   @JoinTable({
     name: 'normativa_procedimiento',
     joinColumn: { name: 'id_normativa', referencedColumnName: 'id_normativa' },
-    inverseJoinColumn: { name: 'id_procedimiento', referencedColumnName: 'id_procedimiento' },
+    inverseJoinColumn: {
+      name: 'id_procedimiento',
+      referencedColumnName: 'id_procedimiento',
+    },
   })
   procedimientos: Procedimiento[];
 }

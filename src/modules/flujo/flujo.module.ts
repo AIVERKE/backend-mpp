@@ -9,7 +9,15 @@ import { Accion } from './entities/accion.entity';
 import { Tarea } from './entities/tarea.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Operacion, OperacionCargo, Actividad, Accion, Tarea])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Operacion,
+      OperacionCargo,
+      Actividad,
+      Accion,
+      Tarea,
+    ]),
+  ],
   controllers: [FlujoController],
   providers: [FlujoService],
   exports: [FlujoService],

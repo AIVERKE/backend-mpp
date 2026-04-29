@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { Procedimiento } from '../../procesos/entities/procedimiento.entity';
 
 @Entity('Indicador')
@@ -34,7 +40,10 @@ export class Indicador {
   @JoinTable({
     name: 'procedimiento_indicador',
     joinColumn: { name: 'id_indicador', referencedColumnName: 'id_indicador' },
-    inverseJoinColumn: { name: 'id_procedimiento', referencedColumnName: 'id_procedimiento' },
+    inverseJoinColumn: {
+      name: 'id_procedimiento',
+      referencedColumnName: 'id_procedimiento',
+    },
   })
   procedimientos: Procedimiento[];
 }

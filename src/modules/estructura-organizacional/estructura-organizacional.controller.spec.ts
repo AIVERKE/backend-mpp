@@ -9,7 +9,9 @@ describe('EstructuraOrganizacionalController', () => {
       controllers: [EstructuraOrganizacionalController],
     }).compile();
 
-    controller = module.get<EstructuraOrganizacionalController>(EstructuraOrganizacionalController);
+    controller = module.get<EstructuraOrganizacionalController>(
+      EstructuraOrganizacionalController,
+    );
   });
 
   it('should be defined', () => {

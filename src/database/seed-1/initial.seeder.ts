@@ -23,11 +23,13 @@ import { Indicador } from '../../modules/calidad/entities/indicador.entity';
 export default class InitialSeeder implements Seeder {
   public async run(
     dataSource: DataSource,
-    factoryManager: SeederFactoryManager
+    factoryManager: SeederFactoryManager,
   ): Promise<any> {
     // Limpiar tablas (Trunca con CASCADE para manejar las FK)
     const entities = dataSource.entityMetadatas;
-    const tableNames = entities.map((entity) => `"${entity.tableName}"`).join(', ');
+    const tableNames = entities
+      .map((entity) => `"${entity.tableName}"`)
+      .join(', ');
     await dataSource.query(`TRUNCATE ${tableNames} RESTART IDENTITY CASCADE;`);
 
     const passwordHash = await bcrypt.hash('password123', 10);
@@ -38,7 +40,10 @@ export default class InitialSeeder implements Seeder {
     const rolRepo = dataSource.getRepository(Rol);
     const roles = await rolRepo.save([
       { nombre: 'Administrador', descripcion: 'Acceso total al sistema' },
-      { nombre: 'Analista de Procesos', descripcion: 'Gestión de flujos y procedimientos' },
+      {
+        nombre: 'Analista de Procesos',
+        descripcion: 'Gestión de flujos y procedimientos',
+      },
       { nombre: 'Auditor', descripcion: 'Consulta y verificación de calidad' },
       { nombre: 'Gerente', descripcion: 'Aprobación y revisión estratégica' },
       { nombre: 'Operador', descripcion: 'Ejecución de tareas' },
@@ -76,21 +81,84 @@ export default class InitialSeeder implements Seeder {
       { nombre: 'Técnico de Soporte', descripcion: 'Hardware y redes' },
       { nombre: 'Auditor Interno', descripcion: 'Revisión de normas' },
       { nombre: 'Secretario Ejecutivo', descripcion: 'Gestión de agenda' },
-      { nombre: 'Líder de Proyecto', descripcion: 'Gestión de tiempos y recursos' },
+      {
+        nombre: 'Líder de Proyecto',
+        descripcion: 'Gestión de tiempos y recursos',
+      },
     ] as any[]);
 
     const unidadRepo = dataSource.getRepository(Unidad);
     const unidades = await unidadRepo.save([
-      { nombre: 'Dirección de Tecnología', sigla: 'DT', nivel: '1', tipo_unidad: 'Sustantiva', cargos: [cargos[1], cargos[2]] },
-      { nombre: 'Gerencia de Finanzas', sigla: 'GF', nivel: '1', tipo_unidad: 'Apoyo', cargos: [cargos[4]] },
-      { nombre: 'Departamento de Calidad', sigla: 'DC', nivel: '2', tipo_unidad: 'Asesoría', cargos: [cargos[7]] },
-      { nombre: 'Unidad de Procesos', sigla: 'UP', nivel: '2', tipo_unidad: 'Sustantiva', cargos: [cargos[3]] },
-      { nombre: 'Recursos Humanos', sigla: 'RRHH', nivel: '1', tipo_unidad: 'Apoyo', cargos: [cargos[8]] },
-      { nombre: 'Auditoría Interna', sigla: 'AI', nivel: '1', tipo_unidad: 'Control', cargos: [cargos[7]] },
-      { nombre: 'Mantenimiento', sigla: 'MANT', nivel: '2', tipo_unidad: 'Apoyo', cargos: [cargos[6]] },
-      { nombre: 'Ventas', sigla: 'VNT', nivel: '1', tipo_unidad: 'Sustantiva', cargos: [cargos[9]] },
-      { nombre: 'Logística', sigla: 'LOG', nivel: '2', tipo_unidad: 'Sustantiva', cargos: [cargos[5]] },
-      { nombre: 'Comunicación', sigla: 'COM', nivel: '2', tipo_unidad: 'Asesoría', cargos: [cargos[0]] },
+      {
+        nombre: 'Dirección de Tecnología',
+        sigla: 'DT',
+        nivel: '1',
+        tipo_unidad: 'Sustantiva',
+        cargos: [cargos[1], cargos[2]],
+      },
+      {
+        nombre: 'Gerencia de Finanzas',
+        sigla: 'GF',
+        nivel: '1',
+        tipo_unidad: 'Apoyo',
+        cargos: [cargos[4]],
+      },
+      {
+        nombre: 'Departamento de Calidad',
+        sigla: 'DC',
+        nivel: '2',
+        tipo_unidad: 'Asesoría',
+        cargos: [cargos[7]],
+      },
+      {
+        nombre: 'Unidad de Procesos',
+        sigla: 'UP',
+        nivel: '2',
+        tipo_unidad: 'Sustantiva',
+        cargos: [cargos[3]],
+      },
+      {
+        nombre: 'Recursos Humanos',
+        sigla: 'RRHH',
+        nivel: '1',
+        tipo_unidad: 'Apoyo',
+        cargos: [cargos[8]],
+      },
+      {
+        nombre: 'Auditoría Interna',
+        sigla: 'AI',
+        nivel: '1',
+        tipo_unidad: 'Control',
+        cargos: [cargos[7]],
+      },
+      {
+        nombre: 'Mantenimiento',
+        sigla: 'MANT',
+        nivel: '2',
+        tipo_unidad: 'Apoyo',
+        cargos: [cargos[6]],
+      },
+      {
+        nombre: 'Ventas',
+        sigla: 'VNT',
+        nivel: '1',
+        tipo_unidad: 'Sustantiva',
+        cargos: [cargos[9]],
+      },
+      {
+        nombre: 'Logística',
+        sigla: 'LOG',
+        nivel: '2',
+        tipo_unidad: 'Sustantiva',
+        cargos: [cargos[5]],
+      },
+      {
+        nombre: 'Comunicación',
+        sigla: 'COM',
+        nivel: '2',
+        tipo_unidad: 'Asesoría',
+        cargos: [cargos[0]],
+      },
     ] as any[]);
 
     // ==========================================
@@ -98,30 +166,130 @@ export default class InitialSeeder implements Seeder {
     // ==========================================
     const procesoRepo = dataSource.getRepository(Proceso);
     const procesos = await procesoRepo.save([
-      { nombre: 'Gestión de Desarrollo', descripcion: 'Ciclo de vida del software', tipo_proceso: 'Sustantivo' },
-      { nombre: 'Contratación de Personal', descripcion: 'Ingreso de nuevos talentos', tipo_proceso: 'Apoyo' },
-      { nombre: 'Auditoría Anual', descripcion: 'Revisión general de cumplimiento', tipo_proceso: 'Estratégico' },
-      { nombre: 'Soporte Técnico', descripcion: 'Atención a incidentes', tipo_proceso: 'Apoyo' },
-      { nombre: 'Planificación Estratégica', descripcion: 'Metas a largo plazo', tipo_proceso: 'Estratégico' },
-      { nombre: 'Compras Menores', descripcion: 'Adquisición de insumos', tipo_proceso: 'Apoyo' },
-      { nombre: 'Gestión de Calidad', descripcion: 'Monitoreo de estándares', tipo_proceso: 'Sustantivo' },
-      { nombre: 'Atención al Cliente', descripcion: 'Resolución de dudas', tipo_proceso: 'Sustantivo' },
-      { nombre: 'Mantenimiento de Redes', descripcion: 'Infraestructura IT', tipo_proceso: 'Apoyo' },
-      { nombre: 'Desarrollo de Mercado', descripcion: 'Expansión comercial', tipo_proceso: 'Estratégico' },
+      {
+        nombre: 'Gestión de Desarrollo',
+        descripcion: 'Ciclo de vida del software',
+        tipo_proceso: 'Sustantivo',
+      },
+      {
+        nombre: 'Contratación de Personal',
+        descripcion: 'Ingreso de nuevos talentos',
+        tipo_proceso: 'Apoyo',
+      },
+      {
+        nombre: 'Auditoría Anual',
+        descripcion: 'Revisión general de cumplimiento',
+        tipo_proceso: 'Estratégico',
+      },
+      {
+        nombre: 'Soporte Técnico',
+        descripcion: 'Atención a incidentes',
+        tipo_proceso: 'Apoyo',
+      },
+      {
+        nombre: 'Planificación Estratégica',
+        descripcion: 'Metas a largo plazo',
+        tipo_proceso: 'Estratégico',
+      },
+      {
+        nombre: 'Compras Menores',
+        descripcion: 'Adquisición de insumos',
+        tipo_proceso: 'Apoyo',
+      },
+      {
+        nombre: 'Gestión de Calidad',
+        descripcion: 'Monitoreo de estándares',
+        tipo_proceso: 'Sustantivo',
+      },
+      {
+        nombre: 'Atención al Cliente',
+        descripcion: 'Resolución de dudas',
+        tipo_proceso: 'Sustantivo',
+      },
+      {
+        nombre: 'Mantenimiento de Redes',
+        descripcion: 'Infraestructura IT',
+        tipo_proceso: 'Apoyo',
+      },
+      {
+        nombre: 'Desarrollo de Mercado',
+        descripcion: 'Expansión comercial',
+        tipo_proceso: 'Estratégico',
+      },
     ] as any[]);
 
     const procedimientoRepo = dataSource.getRepository(Procedimiento);
     const procedimientos = await procedimientoRepo.save([
-      { nombre: 'Despliegue en Producción', codigo: 'PROC-IT-001', objetivos: 'Llevar código a prod', alcance: 'Toda el área IT', proceso: procesos[0] },
-      { nombre: 'Entrevista Técnica', codigo: 'PROC-RH-002', objetivos: 'Evaluar candidatos', alcance: 'RRHH e IT', proceso: procesos[1] },
-      { nombre: 'Checklist de Auditoría', codigo: 'PROC-AI-003', objetivos: 'Verificar normas', alcance: 'Toda la empresa', proceso: procesos[2] },
-      { nombre: 'Reemplazo de Hardware', codigo: 'PROC-ST-004', objetivos: 'Cambiar equipos fallidos', alcance: 'Soporte', proceso: procesos[3] },
-      { nombre: 'Definición de KPIs', codigo: 'PROC-PE-005', objetivos: 'Establecer métricas', alcance: 'Gerencia', proceso: procesos[4] },
-      { nombre: 'Solicitud de Cotización', codigo: 'PROC-CO-006', objetivos: 'Obtener precios', alcance: 'Compras', proceso: procesos[5] },
-      { nombre: 'Control de Documentos', codigo: 'PROC-GC-007', objetivos: 'Organizar archivos', alcance: 'Calidad', proceso: procesos[6] },
-      { nombre: 'Registro de Ticket', codigo: 'PROC-AC-008', objetivos: 'Atender reclamos', alcance: 'Atención Cliente', proceso: procesos[7] },
-      { nombre: 'Backup de Base de Datos', codigo: 'PROC-RED-009', objetivos: 'Resguardar info', alcance: 'Infraestructura', proceso: procesos[8] },
-      { nombre: 'Análisis de Competencia', codigo: 'PROC-DM-010', objetivos: 'Estudiar mercado', alcance: 'Comercial', proceso: procesos[9] },
+      {
+        nombre: 'Despliegue en Producción',
+        codigo: 'PROC-IT-001',
+        objetivos: 'Llevar código a prod',
+        alcance: 'Toda el área IT',
+        proceso: procesos[0],
+      },
+      {
+        nombre: 'Entrevista Técnica',
+        codigo: 'PROC-RH-002',
+        objetivos: 'Evaluar candidatos',
+        alcance: 'RRHH e IT',
+        proceso: procesos[1],
+      },
+      {
+        nombre: 'Checklist de Auditoría',
+        codigo: 'PROC-AI-003',
+        objetivos: 'Verificar normas',
+        alcance: 'Toda la empresa',
+        proceso: procesos[2],
+      },
+      {
+        nombre: 'Reemplazo de Hardware',
+        codigo: 'PROC-ST-004',
+        objetivos: 'Cambiar equipos fallidos',
+        alcance: 'Soporte',
+        proceso: procesos[3],
+      },
+      {
+        nombre: 'Definición de KPIs',
+        codigo: 'PROC-PE-005',
+        objetivos: 'Establecer métricas',
+        alcance: 'Gerencia',
+        proceso: procesos[4],
+      },
+      {
+        nombre: 'Solicitud de Cotización',
+        codigo: 'PROC-CO-006',
+        objetivos: 'Obtener precios',
+        alcance: 'Compras',
+        proceso: procesos[5],
+      },
+      {
+        nombre: 'Control de Documentos',
+        codigo: 'PROC-GC-007',
+        objetivos: 'Organizar archivos',
+        alcance: 'Calidad',
+        proceso: procesos[6],
+      },
+      {
+        nombre: 'Registro de Ticket',
+        codigo: 'PROC-AC-008',
+        objetivos: 'Atender reclamos',
+        alcance: 'Atención Cliente',
+        proceso: procesos[7],
+      },
+      {
+        nombre: 'Backup de Base de Datos',
+        codigo: 'PROC-RED-009',
+        objetivos: 'Resguardar info',
+        alcance: 'Infraestructura',
+        proceso: procesos[8],
+      },
+      {
+        nombre: 'Análisis de Competencia',
+        codigo: 'PROC-DM-010',
+        objetivos: 'Estudiar mercado',
+        alcance: 'Comercial',
+        proceso: procesos[9],
+      },
     ] as any[]);
 
     // ==========================================
@@ -129,21 +297,65 @@ export default class InitialSeeder implements Seeder {
     // ==========================================
     const operacionRepo = dataSource.getRepository(Operacion);
     const operaciones = await operacionRepo.save([
-      { nombre: 'Revisión de Código', orden: 1, procedimiento: procedimientos[0] },
-      { nombre: 'Preparación de Sala', orden: 1, procedimiento: procedimientos[1] },
-      { nombre: 'Revisión de Documentos', orden: 1, procedimiento: procedimientos[2] },
-      { nombre: 'Diagnóstico Inicial', orden: 1, procedimiento: procedimientos[3] },
-      { nombre: 'Taller de Lluvia de Ideas', orden: 1, procedimiento: procedimientos[4] },
-      { nombre: 'Búsqueda de Proveedores', orden: 1, procedimiento: procedimientos[5] },
-      { nombre: 'Clasificación de Normas', orden: 1, procedimiento: procedimientos[6] },
-      { nombre: 'Recepción de Llamada', orden: 1, procedimiento: procedimientos[7] },
-      { nombre: 'Cierre de Sesiones', orden: 1, procedimiento: procedimientos[8] },
-      { nombre: 'Recolección de Datos', orden: 1, procedimiento: procedimientos[9] },
+      {
+        nombre: 'Revisión de Código',
+        orden: 1,
+        procedimiento: procedimientos[0],
+      },
+      {
+        nombre: 'Preparación de Sala',
+        orden: 1,
+        procedimiento: procedimientos[1],
+      },
+      {
+        nombre: 'Revisión de Documentos',
+        orden: 1,
+        procedimiento: procedimientos[2],
+      },
+      {
+        nombre: 'Diagnóstico Inicial',
+        orden: 1,
+        procedimiento: procedimientos[3],
+      },
+      {
+        nombre: 'Taller de Lluvia de Ideas',
+        orden: 1,
+        procedimiento: procedimientos[4],
+      },
+      {
+        nombre: 'Búsqueda de Proveedores',
+        orden: 1,
+        procedimiento: procedimientos[5],
+      },
+      {
+        nombre: 'Clasificación de Normas',
+        orden: 1,
+        procedimiento: procedimientos[6],
+      },
+      {
+        nombre: 'Recepción de Llamada',
+        orden: 1,
+        procedimiento: procedimientos[7],
+      },
+      {
+        nombre: 'Cierre de Sesiones',
+        orden: 1,
+        procedimiento: procedimientos[8],
+      },
+      {
+        nombre: 'Recolección de Datos',
+        orden: 1,
+        procedimiento: procedimientos[9],
+      },
     ] as any[]);
 
     const actividadRepo = dataSource.getRepository(Actividad);
     const actividades = await actividadRepo.save(
-      operaciones.map((op: any, i: number) => ({ descripcion: `Actividad ${i + 1}`, orden: 1, operacion: op })) as any[]
+      operaciones.map((op: any, i: number) => ({
+        descripcion: `Actividad ${i + 1}`,
+        orden: 1,
+        operacion: op,
+      })) as any[],
     );
 
     const accionRepo = dataSource.getRepository(Accion);
@@ -168,32 +380,67 @@ export default class InitialSeeder implements Seeder {
         orden: 1,
         actividad: act,
         accion: acciones[i % 10],
-      })) as any[]
+      })) as any[],
     );
 
     // ==========================================
     // 5. REQUISITOS, RIESGOS, CONTROLES
     // ==========================================
     const reqRepo = dataSource.getRepository(Requisitos);
-    await reqRepo.save(operaciones.map((op: any, i: number) => ({ nombre: `Requisito ${i + 1}`, descripcion: 'Obligatorio', operacion: op })) as any[]);
+    await reqRepo.save(
+      operaciones.map((op: any, i: number) => ({
+        nombre: `Requisito ${i + 1}`,
+        descripcion: 'Obligatorio',
+        operacion: op,
+      })) as any[],
+    );
 
     const riesgoRepo = dataSource.getRepository(Riesgo);
-    await riesgoRepo.save(operaciones.map((op: any, i: number) => ({ nombre: `Riesgo ${i + 1}`, impacto: 'Alto', probabilidad: 'Media', operacion: op })) as any[]);
+    await riesgoRepo.save(
+      operaciones.map((op: any, i: number) => ({
+        nombre: `Riesgo ${i + 1}`,
+        impacto: 'Alto',
+        probabilidad: 'Media',
+        operacion: op,
+      })) as any[],
+    );
 
     const controlRepo = dataSource.getRepository(Control);
-    await controlRepo.save(operaciones.map((op: any, i: number) => ({ nombre: `Control ${i + 1}`, descripcion: 'Mitigación automática', operacion: op })) as any[]);
+    await controlRepo.save(
+      operaciones.map((op: any, i: number) => ({
+        nombre: `Control ${i + 1}`,
+        descripcion: 'Mitigación automática',
+        operacion: op,
+      })) as any[],
+    );
 
     // ==========================================
     // 6. RECURSOS
     // ==========================================
     const equipoRepo = dataSource.getRepository(Equipo);
     const equipos = await equipoRepo.save([
-      { nombre: 'Laptop Dell XPS', codigo: 'EQ-001', descripcion: 'Para desarrollo' },
-      { nombre: 'Servidor ProLiant', codigo: 'EQ-002', descripcion: 'Host de BD' },
+      {
+        nombre: 'Laptop Dell XPS',
+        codigo: 'EQ-001',
+        descripcion: 'Para desarrollo',
+      },
+      {
+        nombre: 'Servidor ProLiant',
+        codigo: 'EQ-002',
+        descripcion: 'Host de BD',
+      },
       { nombre: 'Switch Cisco', codigo: 'EQ-003', descripcion: 'Red Core' },
-      { nombre: 'Monitor 27"', codigo: 'EQ-004', descripcion: 'Doble pantalla' },
+      {
+        nombre: 'Monitor 27"',
+        codigo: 'EQ-004',
+        descripcion: 'Doble pantalla',
+      },
       { nombre: 'Impresora Laser', codigo: 'EQ-005', descripcion: 'RRHH' },
-      { nombre: 'Router Ubiquiti', codigo: 'EQ-006', descripcion: 'WiFi Oficina' },
+      {
+        nombre: 'Router Ubiquiti',
+        codigo: 'EQ-006',
+        descripcion: 'WiFi Oficina',
+      },
       { nombre: 'Tablet iPad', codigo: 'EQ-007', descripcion: 'Diseño' },
       { nombre: 'UPS 3KVA', codigo: 'EQ-008', descripcion: 'Respaldo energía' },
       { nombre: 'Scanner 3D', codigo: 'EQ-009', descripcion: 'Prototipado' },
@@ -241,15 +488,39 @@ export default class InitialSeeder implements Seeder {
     const indicadorRepo = dataSource.getRepository(Indicador);
     await indicadorRepo.save([
       { denominacion: 'Tiempo de Respuesta', formula: 'T2 - T1', meta: '2h' },
-      { denominacion: 'Disponibilidad', formula: 'Uptime / Total', meta: '99.9%' },
+      {
+        denominacion: 'Disponibilidad',
+        formula: 'Uptime / Total',
+        meta: '99.9%',
+      },
       { denominacion: 'Satisfacción', formula: 'Promedio CSAT', meta: '4.5' },
       { denominacion: 'Bugs en Prod', formula: 'Count(Bugs)', meta: '< 5' },
-      { denominacion: 'Tiempo de Contratación', formula: 'Dias Totales', meta: '15d' },
-      { denominacion: 'Costo por Ticket', formula: 'Presupuesto / Tickets', meta: '$10' },
-      { denominacion: 'Tasa de Rebote', formula: 'Visitas sin acción', meta: '< 20%' },
-      { denominacion: 'Retention Rate', formula: 'Clientes activos', meta: '> 90%' },
+      {
+        denominacion: 'Tiempo de Contratación',
+        formula: 'Dias Totales',
+        meta: '15d',
+      },
+      {
+        denominacion: 'Costo por Ticket',
+        formula: 'Presupuesto / Tickets',
+        meta: '$10',
+      },
+      {
+        denominacion: 'Tasa de Rebote',
+        formula: 'Visitas sin acción',
+        meta: '< 20%',
+      },
+      {
+        denominacion: 'Retention Rate',
+        formula: 'Clientes activos',
+        meta: '> 90%',
+      },
       { denominacion: 'Velocidad de Carga', formula: 'MS carga', meta: '< 2s' },
-      { denominacion: 'Cobertura de Tests', formula: 'Lineas cubiertas', meta: '> 80%' },
+      {
+        denominacion: 'Cobertura de Tests',
+        formula: 'Lineas cubiertas',
+        meta: '> 80%',
+      },
     ] as any[]);
 
     console.log('Seed-1 completado con éxito! 🚀');
