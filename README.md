@@ -51,6 +51,38 @@ Este proyecto utiliza migraciones para mantener sincronizada la estructura de la
   npm run typeorm -- [comando]
   ```
 
+## 🌱 Población de Datos (Seeding)
+
+Para llenar la base de datos con datos de prueba iniciales (usuarios, roles, procesos, etc.), utiliza el siguiente comando:
+
+```bash
+npm run seed -- src/database/seed-1/initial.seeder.ts
+```
+
+> [!IMPORTANT]
+> El seeder realiza un `TRUNCATE CASCADE` de todas las tablas antes de insertar los datos para evitar duplicados. Ten cuidado si tienes datos reales.
+
+### 👥 Usuarios de Prueba
+
+El seeder genera 10 usuarios de prueba con el formato `user1`, `user2`, ... hasta `user10`.
+
+- **Contraseña para todos los usuarios**: `password123`
+- **Formato de Usuario**: `userX` (ej: `user1`)
+- **Correo**: `userX@mpp.com`
+
+| Usuario | Rol Asignado | Correo |
+| :--- | :--- | :--- |
+| **user1** | Administrador | user1@mpp.com |
+| **user2** | Analista de Procesos | user2@mpp.com |
+| **user3** | Auditor | user3@mpp.com |
+| **user4** | Gerente | user4@mpp.com |
+| **user5** | Operador | user5@mpp.com |
+| **user6** | Soporte | user6@mpp.com |
+| **user7** | RRHH | user7@mpp.com |
+| **user8** | Calidad | user8@mpp.com |
+| **user9** | Invitado | user9@mpp.com |
+| **user10** | Coordinador | user10@mpp.com |
+
 ## 🚀 Ejecución del Proyecto
 
 ```bash
