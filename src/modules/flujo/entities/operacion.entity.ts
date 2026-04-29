@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { Procedimiento } from '../../procesos/entities/procedimiento.entity';
 import { OperacionCargo } from './operacion-cargo.entity';
 import { Actividad } from './actividad.entity';
