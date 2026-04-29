@@ -4,6 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
+import { SeguridadModule } from './modules/seguridad/seguridad.module';
+import { EstructuraOrganizacionalModule } from './modules/estructura-organizacional/estructura-organizacional.module';
+import { ProcesosModule } from './modules/procesos/procesos.module';
+import { FlujoModule } from './modules/flujo/flujo.module';
+import { RecursosModule } from './modules/recursos/recursos.module';
+import { CalidadModule } from './modules/calidad/calidad.module';
 
 @Module({
   imports: [
@@ -25,6 +31,12 @@ import { AuthModule } from './modules/auth/auth.module';
       }),
       inject: [ConfigService],
     }),
+    SeguridadModule,
+    EstructuraOrganizacionalModule,
+    ProcesosModule,
+    FlujoModule,
+    RecursosModule,
+    CalidadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
