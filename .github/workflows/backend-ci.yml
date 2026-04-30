@@ -2,7 +2,9 @@ name: Backend CI MPP
 
 on:
   push:
-    branches: [ main ] # Se activa al subir a estas ramas
+    branches: [main]
+  pull_request:
+    branches: [main] # Se activa al subir a estas ramas
 
 jobs:
   check-backend:
@@ -19,8 +21,8 @@ jobs:
 
       - name: Instalar dependencias
         run: npm ci
-        
-      - name: Revisar estilo de código 
+
+      - name: Revisar estilo de código
         run: npm run lint
         continue-on-error: true
 
