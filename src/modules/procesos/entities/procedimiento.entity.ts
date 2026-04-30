@@ -6,6 +6,9 @@ import {
   JoinColumn,
   ManyToMany,
   JoinTable,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Proceso } from './proceso.entity';
 import { Unidad } from '../../estructura-organizacional/entities/unidad.entity';
@@ -53,4 +56,13 @@ export class Procedimiento {
     inverseJoinColumn: { name: 'id_unidad', referencedColumnName: 'id_unidad' },
   })
   instalaciones: Unidad[];
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
+  deletedAt: Date;
 }
