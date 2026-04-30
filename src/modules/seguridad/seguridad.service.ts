@@ -17,6 +17,13 @@ export class SeguridadService {
     return this.usuarioRepository.find({ relations: ['roles'] });
   }
 
+  async findOneByUsername(username: string): Promise<Usuario | null> {
+    return this.usuarioRepository.findOne({
+      where: { username },
+      relations: ['roles'],
+    });
+  }
+
   findAllRoles() {
     return this.rolRepository.find();
   }
