@@ -5,9 +5,12 @@ import { ProcesosController } from './procesos.controller';
 import { Proceso } from './entities/proceso.entity';
 import { Procedimiento } from './entities/procedimiento.entity';
 import { CargoProceso } from './entities/cargo-proceso.entity';
+import { Unidad } from '../estructura-organizacional/entities/unidad.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Proceso, Procedimiento, CargoProceso])],
+  imports: [
+    TypeOrmModule.forFeature([Proceso, Procedimiento, CargoProceso, Unidad]),
+  ],
   controllers: [ProcesosController],
   providers: [ProcesosService],
   exports: [ProcesosService],

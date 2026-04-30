@@ -5,6 +5,9 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Unidad } from '../../estructura-organizacional/entities/unidad.entity';
 import { CargoProceso } from './cargo-proceso.entity';
@@ -33,4 +36,13 @@ export class Proceso {
 
   @OneToMany(() => CargoProceso, (cargoProceso) => cargoProceso.proceso)
   cargoProcesos: CargoProceso[];
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
+  deletedAt: Date;
 }
