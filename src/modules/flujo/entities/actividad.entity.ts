@@ -5,6 +5,9 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Operacion } from './operacion.entity';
 import { Tarea } from './tarea.entity';
@@ -29,4 +32,13 @@ export class Actividad {
 
   @OneToMany(() => Tarea, (tarea) => tarea.actividad)
   tareas: Tarea[];
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
+  deletedAt: Date;
 }

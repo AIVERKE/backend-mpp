@@ -4,6 +4,9 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Operacion } from './operacion.entity';
 import { Cargo } from '../../estructura-organizacional/entities/cargo.entity';
@@ -29,4 +32,13 @@ export class OperacionCargo {
   @ManyToOne(() => Cargo)
   @JoinColumn({ name: 'id_cargo' })
   cargo: Cargo;
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
+  deletedAt: Date;
 }
