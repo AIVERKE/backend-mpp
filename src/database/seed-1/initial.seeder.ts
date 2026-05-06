@@ -14,7 +14,6 @@ import { Tarea } from '../../modules/flujo/entities/tarea.entity';
 import { Requisitos } from '../../modules/recursos/entities/requisitos.entity';
 import { Riesgo } from '../../modules/recursos/entities/riesgo.entity';
 import { Control } from '../../modules/recursos/entities/control.entity';
-import { DocumentoReferencia } from '../../modules/recursos/entities/documento-referencia.entity';
 import { Equipo } from '../../modules/recursos/entities/equipo.entity';
 import { SistemaInformacion } from '../../modules/recursos/entities/sistema-informacion.entity';
 import { Normativa } from '../../modules/calidad/entities/normativa.entity';
@@ -23,7 +22,7 @@ import { Indicador } from '../../modules/calidad/entities/indicador.entity';
 export default class InitialSeeder implements Seeder {
   public async run(
     dataSource: DataSource,
-    factoryManager: SeederFactoryManager,
+    _factoryManager: SeederFactoryManager,
   ): Promise<any> {
     // Limpiar tablas (Trunca con CASCADE para manejar las FK)
     const entities = dataSource.entityMetadatas;
@@ -87,79 +86,87 @@ export default class InitialSeeder implements Seeder {
       },
     ] as any[]);
 
+    const isProd = process.env.NODE_ENV === 'production';
+
     const unidadRepo = dataSource.getRepository(Unidad);
-    const unidades = await unidadRepo.save([
-      {
-        nombre: 'Dirección de Tecnología',
-        sigla: 'DT',
-        nivel: '1',
-        tipo_unidad: 'Sustantiva',
-        cargos: [cargos[1], cargos[2]],
-      },
-      {
-        nombre: 'Gerencia de Finanzas',
-        sigla: 'GF',
-        nivel: '1',
-        tipo_unidad: 'Apoyo',
-        cargos: [cargos[4]],
-      },
-      {
-        nombre: 'Departamento de Calidad',
-        sigla: 'DC',
-        nivel: '2',
-        tipo_unidad: 'Asesoría',
-        cargos: [cargos[7]],
-      },
-      {
-        nombre: 'Unidad de Procesos',
-        sigla: 'UP',
-        nivel: '2',
-        tipo_unidad: 'Sustantiva',
-        cargos: [cargos[3]],
-      },
-      {
-        nombre: 'Recursos Humanos',
-        sigla: 'RRHH',
-        nivel: '1',
-        tipo_unidad: 'Apoyo',
-        cargos: [cargos[8]],
-      },
-      {
-        nombre: 'Auditoría Interna',
-        sigla: 'AI',
-        nivel: '1',
-        tipo_unidad: 'Control',
-        cargos: [cargos[7]],
-      },
-      {
-        nombre: 'Mantenimiento',
-        sigla: 'MANT',
-        nivel: '2',
-        tipo_unidad: 'Apoyo',
-        cargos: [cargos[6]],
-      },
-      {
-        nombre: 'Ventas',
-        sigla: 'VNT',
-        nivel: '1',
-        tipo_unidad: 'Sustantiva',
-        cargos: [cargos[9]],
-      },
-      {
-        nombre: 'Logística',
-        sigla: 'LOG',
-        nivel: '2',
-        tipo_unidad: 'Sustantiva',
-        cargos: [cargos[5]],
-      },
-      {
-        nombre: 'Comunicación',
-        sigla: 'COM',
-        nivel: '2',
-        tipo_unidad: 'Asesoría',
-        cargos: [cargos[0]],
-      },
-    ] as any[]);
+    if (!isProd) {
+      await unidadRepo.save([
+        {
+          nombre: 'Dirección de Tecnología',
+          sigla: 'DT',
+          nivel: '1',
+          tipo_unidad: 'Sustantiva',
+          cargos: [cargos[1], cargos[2]],
+        },
+        {
+          nombre: 'Gerencia de Finanzas',
+          sigla: 'GF',
+          nivel: '1',
+          tipo_unidad: 'Apoyo',
+          cargos: [cargos[4]],
+        },
+        {
+          nombre: 'Departamento de Calidad',
+          sigla: 'DC',
+          nivel: '2',
+          tipo_unidad: 'Asesoría',
+          cargos: [cargos[7]],
+        },
+        {
+          nombre: 'Unidad de Procesos',
+          sigla: 'UP',
+          nivel: '2',
+          tipo_unidad: 'Sustantiva',
+          cargos: [cargos[3]],
+        },
+        {
+          nombre: 'Recursos Humanos',
+          sigla: 'RRHH',
+          nivel: '1',
+          tipo_unidad: 'Apoyo',
+          cargos: [cargos[8]],
+        },
+        {
+          nombre: 'Auditoría Interna',
+          sigla: 'AI',
+          nivel: '1',
+          tipo_unidad: 'Control',
+          cargos: [cargos[7]],
+        },
+        {
+          nombre: 'Mantenimiento',
+          sigla: 'MANT',
+          nivel: '2',
+          tipo_unidad: 'Apoyo',
+          cargos: [cargos[6]],
+        },
+        {
+          nombre: 'Ventas',
+          sigla: 'VNT',
+          nivel: '1',
+          tipo_unidad: 'Sustantiva',
+          cargos: [cargos[9]],
+        },
+        {
+          nombre: 'Logística',
+          sigla: 'LOG',
+          nivel: '2',
+          tipo_unidad: 'Sustantiva',
+          cargos: [cargos[5]],
+        },
+        {
+          nombre: 'Comunicación',
+          sigla: 'COM',
+          nivel: '2',
+          tipo_unidad: 'Asesoría',
+          cargos: [cargos[0]],
+        },
+      ] as any[]);
+    } else {
+      console.log(
+        'Entorno de producción: se omite el seeding de unidades locales. El servicio MOF se encargará de la sincronización oficial.',
+      );
+    }
 
     // ==========================================
     // 3. PROCESOS Y PROCEDIMIENTOS
