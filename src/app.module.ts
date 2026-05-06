@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
@@ -10,12 +11,14 @@ import { ProcesosModule } from './modules/procesos/procesos.module';
 import { FlujoModule } from './modules/flujo/flujo.module';
 import { RecursosModule } from './modules/recursos/recursos.module';
 import { CalidadModule } from './modules/calidad/calidad.module';
+import { MofModule } from './modules/mof/mof.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     AuthModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -37,6 +40,7 @@ import { CalidadModule } from './modules/calidad/calidad.module';
     FlujoModule,
     RecursosModule,
     CalidadModule,
+    MofModule,
   ],
   controllers: [AppController],
   providers: [AppService],

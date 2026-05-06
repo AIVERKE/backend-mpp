@@ -25,4 +25,6 @@ export class CreateOperacionCargoDto {
   tipo_participacion?: string;
 }
 
-export class UpdateOperacionCargoDto extends PartialType(CreateOperacionCargoDto) {}
+export class UpdateOperacionCargoDto extends PartialType(
+  CreateOperacionCargoDto,
+) {}
