@@ -1,6 +1,6 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   Column,
   ManyToMany,
   JoinTable,
@@ -12,7 +12,7 @@ import { Cargo } from './cargo.entity';
 
 @Entity('Unidad')
 export class Unidad {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id_unidad: number;
 
   @Column()

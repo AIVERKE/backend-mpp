@@ -1,7 +1,15 @@
-import { Controller, Get, Post, Logger } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Logger,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { MofService } from './mof.service';
 import { MofUnidadDto } from './dto/mof-unidad.dto';
+import { MofPersonalDto } from './dto/mof-personal.dto';
 
 @ApiTags('mof')
 @Controller('mof')
@@ -93,5 +101,54 @@ export class MofController {
   })
   getStatus() {
     return this.mofService.getStatus();
+  }
+
+  @Post('cargos/sync')
+  @ApiOperation({
+    summary: 'Sincroniza todos los cargos desde el MOF',
+    description:
+      'Limpia la tabla Cargo y repobla con datos obtenidos para cada unidad sincronizada. Este proceso puede tardar varios minutos debido al procesamiento por lotes para evitar saturar el API externo.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Sincronización de cargos completada.',
+    schema: {
+      example: {
+        total_cargos: 120,
+        unidades_procesadas: 45,
+        timestamp: '2026-05-07T14:30:00Z',
+      },
+    },
+  })
+  async syncCargos() {
+    return await this.mofService.syncCargos();
+  }
+
+  @Get('cargos')
+  @ApiOperation({
+    summary: 'Lista todos los cargos sincronizados en la base de datos local',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de cargos.',
+  })
+  async getCargos() {
+    return await this.mofService.getCargos();
+  }
+
+  @Get('unidades/:id/personal')
+  @ApiOperation({
+    summary: 'Proxy al endpoint del MOF para obtener personal de una unidad',
+    description:
+      'Obtiene los cargos/personal directamente desde el MOF sin persistir.',
+  })
+  @ApiParam({ name: 'id', description: 'ID de la unidad en el MOF' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de personal obtenida.',
+    type: [MofPersonalDto],
+  })
+  async getPersonal(@Param('id', ParseIntPipe) id: number) {
+    return await this.mofService.fetchPersonalByUnidad(id);
   }
 }

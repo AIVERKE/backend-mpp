@@ -1,6 +1,6 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
@@ -9,7 +9,7 @@ import {
 
 @Entity('cargo')
 export class Cargo {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id_cargo: number;
 
   @Column()
