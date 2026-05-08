@@ -4,6 +4,9 @@ import {
   Column,
   ManyToMany,
   JoinTable,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Operacion } from '../../flujo/entities/operacion.entity';
 
@@ -34,4 +37,13 @@ export class DocumentoReferencia {
     },
   })
   operaciones: Operacion[];
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
+  deletedAt: Date;
 }
