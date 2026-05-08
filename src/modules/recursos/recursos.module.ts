@@ -8,6 +8,8 @@ import { Control } from './entities/control.entity';
 import { DocumentoReferencia } from './entities/documento-referencia.entity';
 import { Equipo } from './entities/equipo.entity';
 import { SistemaInformacion } from './entities/sistema-informacion.entity';
+import { Procedimiento } from '../procesos/entities/procedimiento.entity';
+import { Operacion } from '../flujo/entities/operacion.entity';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { SistemaInformacion } from './entities/sistema-informacion.entity';
       DocumentoReferencia,
       Equipo,
       SistemaInformacion,
+      Procedimiento,
+      Operacion,
     ]),
   ],
   controllers: [RecursosController],
