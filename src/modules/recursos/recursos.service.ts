@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
@@ -62,7 +63,11 @@ export class RecursosService {
     }
 
     const requisito = this.requisitosRepository.create(createDto);
-    return await this.requisitosRepository.save(requisito);
+    try {
+      return await this.requisitosRepository.save(requisito);
+    } catch (error) {
+      this.handleDatabaseError(error);
+    }
   }
 
   async findAllRequisitos(): Promise<Requisitos[]> {
@@ -97,7 +102,11 @@ export class RecursosService {
     }
 
     Object.assign(requisito, updateDto);
-    return await this.requisitosRepository.save(requisito);
+    try {
+      return await this.requisitosRepository.save(requisito);
+    } catch (error) {
+      this.handleDatabaseError(error);
+    }
   }
 
   async removeRequisitos(id: number): Promise<void> {
@@ -120,7 +129,11 @@ export class RecursosService {
     }
 
     const riesgo = this.riesgoRepository.create(createDto);
-    return await this.riesgoRepository.save(riesgo);
+    try {
+      return await this.riesgoRepository.save(riesgo);
+    } catch (error) {
+      this.handleDatabaseError(error);
+    }
   }
 
   async findAllRiesgos(): Promise<Riesgo[]> {
@@ -152,7 +165,11 @@ export class RecursosService {
     }
 
     Object.assign(riesgo, updateDto);
-    return await this.riesgoRepository.save(riesgo);
+    try {
+      return await this.riesgoRepository.save(riesgo);
+    } catch (error) {
+      this.handleDatabaseError(error);
+    }
   }
 
   async removeRiesgo(id: number): Promise<void> {
@@ -175,7 +192,11 @@ export class RecursosService {
     }
 
     const control = this.controlRepository.create(createDto);
-    return await this.controlRepository.save(control);
+    try {
+      return await this.controlRepository.save(control);
+    } catch (error) {
+      this.handleDatabaseError(error);
+    }
   }
 
   async findAllControles(): Promise<Control[]> {
@@ -210,7 +231,11 @@ export class RecursosService {
     }
 
     Object.assign(control, updateDto);
-    return await this.controlRepository.save(control);
+    try {
+      return await this.controlRepository.save(control);
+    } catch (error) {
+      this.handleDatabaseError(error);
+    }
   }
 
   async removeControl(id: number): Promise<void> {
@@ -236,7 +261,11 @@ export class RecursosService {
       sistema.procedimientos = procedimientos;
     }
 
-    return await this.sistemaInformacionRepository.save(sistema);
+    try {
+      return await this.sistemaInformacionRepository.save(sistema);
+    } catch (error) {
+      this.handleDatabaseError(error);
+    }
   }
 
   async findAllSistemasInformacion(): Promise<SistemaInformacion[]> {
@@ -280,7 +309,11 @@ export class RecursosService {
       }
     }
 
-    return await this.sistemaInformacionRepository.save(sistema);
+    try {
+      return await this.sistemaInformacionRepository.save(sistema);
+    } catch (error) {
+      this.handleDatabaseError(error);
+    }
   }
 
   async removeSistemaInformacion(id: number): Promise<void> {
@@ -304,7 +337,11 @@ export class RecursosService {
       equipo.procedimientos = procedimientos;
     }
 
-    return await this.equipoRepository.save(equipo);
+    try {
+      return await this.equipoRepository.save(equipo);
+    } catch (error) {
+      this.handleDatabaseError(error);
+    }
   }
 
   async findAllEquipos(): Promise<Equipo[]> {
@@ -341,7 +378,11 @@ export class RecursosService {
       }
     }
 
-    return await this.equipoRepository.save(equipo);
+    try {
+      return await this.equipoRepository.save(equipo);
+    } catch (error) {
+      this.handleDatabaseError(error);
+    }
   }
 
   async removeEquipo(id: number): Promise<void> {
@@ -367,7 +408,11 @@ export class RecursosService {
       documento.operaciones = operaciones;
     }
 
-    return await this.documentoReferenciaRepository.save(documento);
+    try {
+      return await this.documentoReferenciaRepository.save(documento);
+    } catch (error) {
+      this.handleDatabaseError(error);
+    }
   }
 
   async findAllDocumentosReferencia(): Promise<DocumentoReferencia[]> {
@@ -411,11 +456,29 @@ export class RecursosService {
       }
     }
 
-    return await this.documentoReferenciaRepository.save(documento);
+    try {
+      return await this.documentoReferenciaRepository.save(documento);
+    } catch (error) {
+      this.handleDatabaseError(error);
+    }
   }
 
   async removeDocumentoReferencia(id: number): Promise<void> {
     const documento = await this.findOneDocumentoReferencia(id);
     await this.documentoReferenciaRepository.softRemove(documento);
+  }
+
+  private handleDatabaseError(error: unknown): never {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if ((error as any).code === '23505') {
+      throw new ConflictException('Ya existe un registro con estos datos.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if ((error as any).code === '23503') {
+      throw new BadRequestException(
+        'Una o más relaciones especificadas no existen.',
+      );
+    }
+    throw error;
   }
 }
