@@ -71,16 +71,52 @@ export default class InitialSeeder implements Seeder {
     // ==========================================
     const cargoRepo = dataSource.getRepository(Cargo);
     const cargos = await cargoRepo.save([
-      { id_cargo: 1, nombre: 'Director General', descripcion: 'Máxima autoridad' },
-      { id_cargo: 2, nombre: 'Jefe de Desarrollo', descripcion: 'Lidera equipo técnico' },
+      {
+        id_cargo: 1,
+        nombre: 'Director General',
+        descripcion: 'Máxima autoridad',
+      },
+      {
+        id_cargo: 2,
+        nombre: 'Jefe de Desarrollo',
+        descripcion: 'Lidera equipo técnico',
+      },
       { id_cargo: 3, nombre: 'Analista QA', descripcion: 'Asegura la calidad' },
-      { id_cargo: 4, nombre: 'Especialista en Procesos', descripcion: 'Documenta flujos' },
-      { id_cargo: 5, nombre: 'Asistente Administrativo', descripcion: 'Apoyo operativo' },
-      { id_cargo: 6, nombre: 'Consultor Externo', descripcion: 'Asesoría técnica' },
-      { id_cargo: 7, nombre: 'Técnico de Soporte', descripcion: 'Hardware y redes' },
-      { id_cargo: 8, nombre: 'Auditor Interno', descripcion: 'Revisión de normas' },
-      { id_cargo: 9, nombre: 'Secretario Ejecutivo', descripcion: 'Gestión de agenda' },
-      { id_cargo: 10, nombre: 'Líder de Proyecto', descripcion: 'Gestión de tiempos y recursos' },
+      {
+        id_cargo: 4,
+        nombre: 'Especialista en Procesos',
+        descripcion: 'Documenta flujos',
+      },
+      {
+        id_cargo: 5,
+        nombre: 'Asistente Administrativo',
+        descripcion: 'Apoyo operativo',
+      },
+      {
+        id_cargo: 6,
+        nombre: 'Consultor Externo',
+        descripcion: 'Asesoría técnica',
+      },
+      {
+        id_cargo: 7,
+        nombre: 'Técnico de Soporte',
+        descripcion: 'Hardware y redes',
+      },
+      {
+        id_cargo: 8,
+        nombre: 'Auditor Interno',
+        descripcion: 'Revisión de normas',
+      },
+      {
+        id_cargo: 9,
+        nombre: 'Secretario Ejecutivo',
+        descripcion: 'Gestión de agenda',
+      },
+      {
+        id_cargo: 10,
+        nombre: 'Líder de Proyecto',
+        descripcion: 'Gestión de tiempos y recursos',
+      },
     ] as any[]);
 
     const isProd = process.env.NODE_ENV === 'production';

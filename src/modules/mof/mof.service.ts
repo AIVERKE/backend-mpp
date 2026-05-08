@@ -139,10 +139,12 @@ export class MofService implements OnModuleInit {
     } catch (error: any) {
       // Si es un 404, simplemente la unidad no tiene personal asignado en el MOF
       if (error.response?.status === 404) {
-        this.logger.warn(`Unidad ${id_unidad} no tiene personal registrado en el MOF (404).`);
+        this.logger.warn(
+          `Unidad ${id_unidad} no tiene personal registrado en el MOF (404).`,
+        );
         return [];
       }
-      
+
       const message = error instanceof Error ? error.message : String(error);
       this.logger.error(
         `Error al obtener personal de unidad ${id_unidad}: ${message}`,
@@ -176,12 +178,16 @@ export class MofService implements OnModuleInit {
         const batch = unidades.slice(i, i + BATCH_SIZE);
         await Promise.all(
           batch.map(async (unidad) => {
-            this.logger.log(`Solicitando personal para unidad ${unidad.id_unidad} (${unidad.nombre})...`);
+            this.logger.log(
+              `Solicitando personal para unidad ${unidad.id_unidad} (${unidad.nombre})...`,
+            );
             try {
               const personal = await this.fetchPersonalByUnidad(
                 unidad.id_unidad,
               );
-              this.logger.log(`Unidad ${unidad.id_unidad} retornó ${personal.length} cargos.`);
+              this.logger.log(
+                `Unidad ${unidad.id_unidad} retornó ${personal.length} cargos.`,
+              );
               const cargoIds: number[] = [];
 
               for (const p of personal) {
@@ -237,7 +243,9 @@ export class MofService implements OnModuleInit {
         }
 
         this.logger.log(`Total cargos únicos encontrados: ${cargosMap.size}`);
-        this.logger.log(`Total relaciones unidad-cargo encontradas: ${relations.length}`);
+        this.logger.log(
+          `Total relaciones unidad-cargo encontradas: ${relations.length}`,
+        );
 
         if (relations.length > 0) {
           // Insertar en fragmentos de 500 para evitar límites de parámetros de SQL

@@ -10,7 +10,13 @@ import { Unidad } from '../estructura-organizacional/entities/unidad.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Proceso, Procedimiento, CargoProceso, Unidad, Cargo]),
+    TypeOrmModule.forFeature([
+      Proceso,
+      Procedimiento,
+      CargoProceso,
+      Unidad,
+      Cargo,
+    ]),
   ],
   controllers: [ProcesosController],
   providers: [ProcesosService],

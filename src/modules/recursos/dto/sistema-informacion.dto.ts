@@ -23,4 +23,6 @@ export class CreateSistemaInformacionDto {
   id_procedimientos?: number[];
 }
 
-export class UpdateSistemaInformacionDto extends PartialType(CreateSistemaInformacionDto) {}
+export class UpdateSistemaInformacionDto extends PartialType(
+  CreateSistemaInformacionDto,
+) {}

@@ -13,9 +13,15 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { CreateRequisitosDto, UpdateRequisitosDto } from './dto/requisitos.dto';
 import { CreateRiesgoDto, UpdateRiesgoDto } from './dto/riesgo.dto';
 import { CreateControlDto, UpdateControlDto } from './dto/control.dto';
-import { CreateSistemaInformacionDto, UpdateSistemaInformacionDto } from './dto/sistema-informacion.dto';
+import {
+  CreateSistemaInformacionDto,
+  UpdateSistemaInformacionDto,
+} from './dto/sistema-informacion.dto';
 import { CreateEquipoDto, UpdateEquipoDto } from './dto/equipo.dto';
-import { CreateDocumentoReferenciaDto, UpdateDocumentoReferenciaDto } from './dto/documento-referencia.dto';
+import {
+  CreateDocumentoReferenciaDto,
+  UpdateDocumentoReferenciaDto,
+} from './dto/documento-referencia.dto';
 
 @ApiTags('Recursos, Riesgos y Controles')
 @Controller('recursos')
@@ -34,7 +40,10 @@ export class RecursosController {
 
   @Get('requisitos')
   @ApiOperation({ summary: 'Listar todos los requisitos' })
-  @ApiResponse({ status: 200, description: 'Lista de requisitos obtenida exitosamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de requisitos obtenida exitosamente.',
+  })
   findAllRequisitos() {
     return this.service.findAllRequisitos();
   }
@@ -51,16 +60,25 @@ export class RecursosController {
   @Patch('requisitos/:id')
   @ApiOperation({ summary: 'Actualizar un requisito por ID' })
   @ApiParam({ name: 'id', description: 'ID del requisito' })
-  @ApiResponse({ status: 200, description: 'Requisito actualizado exitosamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Requisito actualizado exitosamente.',
+  })
   @ApiResponse({ status: 404, description: 'Requisito no encontrado.' })
-  updateRequisitos(@Param('id', ParseIntPipe) id: number, @Body() updateDto: UpdateRequisitosDto) {
+  updateRequisitos(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: UpdateRequisitosDto,
+  ) {
     return this.service.updateRequisitos(id, updateDto);
   }
 
   @Delete('requisitos/:id')
   @ApiOperation({ summary: 'Eliminar un requisito (Borrado lógico)' })
   @ApiParam({ name: 'id', description: 'ID del requisito' })
-  @ApiResponse({ status: 200, description: 'Requisito eliminado exitosamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Requisito eliminado exitosamente.',
+  })
   @ApiResponse({ status: 404, description: 'Requisito no encontrado.' })
   removeRequisitos(@Param('id', ParseIntPipe) id: number) {
     return this.service.removeRequisitos(id);
@@ -78,7 +96,10 @@ export class RecursosController {
 
   @Get('riesgos')
   @ApiOperation({ summary: 'Listar todos los riesgos' })
-  @ApiResponse({ status: 200, description: 'Lista de riesgos obtenida exitosamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de riesgos obtenida exitosamente.',
+  })
   findAllRiesgos() {
     return this.service.findAllRiesgos();
   }
@@ -97,7 +118,10 @@ export class RecursosController {
   @ApiParam({ name: 'id', description: 'ID del riesgo' })
   @ApiResponse({ status: 200, description: 'Riesgo actualizado exitosamente.' })
   @ApiResponse({ status: 404, description: 'Riesgo no encontrado.' })
-  updateRiesgo(@Param('id', ParseIntPipe) id: number, @Body() updateDto: UpdateRiesgoDto) {
+  updateRiesgo(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: UpdateRiesgoDto,
+  ) {
     return this.service.updateRiesgo(id, updateDto);
   }
 
@@ -122,7 +146,10 @@ export class RecursosController {
 
   @Get('controles')
   @ApiOperation({ summary: 'Listar todos los controles' })
-  @ApiResponse({ status: 200, description: 'Lista de controles obtenida exitosamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de controles obtenida exitosamente.',
+  })
   findAllControles() {
     return this.service.findAllControles();
   }
@@ -139,9 +166,15 @@ export class RecursosController {
   @Patch('controles/:id')
   @ApiOperation({ summary: 'Actualizar un control por ID' })
   @ApiParam({ name: 'id', description: 'ID del control' })
-  @ApiResponse({ status: 200, description: 'Control actualizado exitosamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Control actualizado exitosamente.',
+  })
   @ApiResponse({ status: 404, description: 'Control no encontrado.' })
-  updateControl(@Param('id', ParseIntPipe) id: number, @Body() updateDto: UpdateControlDto) {
+  updateControl(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: UpdateControlDto,
+  ) {
     return this.service.updateControl(id, updateDto);
   }
 
@@ -158,7 +191,10 @@ export class RecursosController {
 
   @Post('sistemas-informacion')
   @ApiOperation({ summary: 'Crear un nuevo sistema de información' })
-  @ApiResponse({ status: 201, description: 'Sistema de información creado exitosamente.' })
+  @ApiResponse({
+    status: 201,
+    description: 'Sistema de información creado exitosamente.',
+  })
   @ApiResponse({ status: 400, description: 'Datos inválidos.' })
   createSistemaInformacion(@Body() createDto: CreateSistemaInformacionDto) {
     return this.service.createSistemaInformacion(createDto);
@@ -166,7 +202,10 @@ export class RecursosController {
 
   @Get('sistemas-informacion')
   @ApiOperation({ summary: 'Listar todos los sistemas de información' })
-  @ApiResponse({ status: 200, description: 'Lista de sistemas de información obtenida exitosamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de sistemas de información obtenida exitosamente.',
+  })
   findAllSistemasInformacion() {
     return this.service.findAllSistemasInformacion();
   }
@@ -174,8 +213,14 @@ export class RecursosController {
   @Get('sistemas-informacion/:id')
   @ApiOperation({ summary: 'Obtener un sistema de información por ID' })
   @ApiParam({ name: 'id', description: 'ID del sistema de información' })
-  @ApiResponse({ status: 200, description: 'Sistema de información encontrado.' })
-  @ApiResponse({ status: 404, description: 'Sistema de información no encontrado.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Sistema de información encontrado.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Sistema de información no encontrado.',
+  })
   findOneSistemaInformacion(@Param('id', ParseIntPipe) id: number) {
     return this.service.findOneSistemaInformacion(id);
   }
@@ -183,17 +228,34 @@ export class RecursosController {
   @Patch('sistemas-informacion/:id')
   @ApiOperation({ summary: 'Actualizar un sistema de información por ID' })
   @ApiParam({ name: 'id', description: 'ID del sistema de información' })
-  @ApiResponse({ status: 200, description: 'Sistema de información actualizado exitosamente.' })
-  @ApiResponse({ status: 404, description: 'Sistema de información no encontrado.' })
-  updateSistemaInformacion(@Param('id', ParseIntPipe) id: number, @Body() updateDto: UpdateSistemaInformacionDto) {
+  @ApiResponse({
+    status: 200,
+    description: 'Sistema de información actualizado exitosamente.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Sistema de información no encontrado.',
+  })
+  updateSistemaInformacion(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: UpdateSistemaInformacionDto,
+  ) {
     return this.service.updateSistemaInformacion(id, updateDto);
   }
 
   @Delete('sistemas-informacion/:id')
-  @ApiOperation({ summary: 'Eliminar un sistema de información (Borrado lógico)' })
+  @ApiOperation({
+    summary: 'Eliminar un sistema de información (Borrado lógico)',
+  })
   @ApiParam({ name: 'id', description: 'ID del sistema de información' })
-  @ApiResponse({ status: 200, description: 'Sistema de información eliminado exitosamente.' })
-  @ApiResponse({ status: 404, description: 'Sistema de información no encontrado.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Sistema de información eliminado exitosamente.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Sistema de información no encontrado.',
+  })
   removeSistemaInformacion(@Param('id', ParseIntPipe) id: number) {
     return this.service.removeSistemaInformacion(id);
   }
@@ -210,7 +272,10 @@ export class RecursosController {
 
   @Get('equipos')
   @ApiOperation({ summary: 'Listar todos los equipos' })
-  @ApiResponse({ status: 200, description: 'Lista de equipos obtenida exitosamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de equipos obtenida exitosamente.',
+  })
   findAllEquipos() {
     return this.service.findAllEquipos();
   }
@@ -229,7 +294,10 @@ export class RecursosController {
   @ApiParam({ name: 'id', description: 'ID del equipo' })
   @ApiResponse({ status: 200, description: 'Equipo actualizado exitosamente.' })
   @ApiResponse({ status: 404, description: 'Equipo no encontrado.' })
-  updateEquipo(@Param('id', ParseIntPipe) id: number, @Body() updateDto: UpdateEquipoDto) {
+  updateEquipo(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: UpdateEquipoDto,
+  ) {
     return this.service.updateEquipo(id, updateDto);
   }
 
@@ -246,7 +314,10 @@ export class RecursosController {
 
   @Post('documentos-referencia')
   @ApiOperation({ summary: 'Crear un nuevo documento de referencia' })
-  @ApiResponse({ status: 201, description: 'Documento de referencia creado exitosamente.' })
+  @ApiResponse({
+    status: 201,
+    description: 'Documento de referencia creado exitosamente.',
+  })
   @ApiResponse({ status: 400, description: 'Datos inválidos.' })
   createDocumentoReferencia(@Body() createDto: CreateDocumentoReferenciaDto) {
     return this.service.createDocumentoReferencia(createDto);
@@ -254,7 +325,10 @@ export class RecursosController {
 
   @Get('documentos-referencia')
   @ApiOperation({ summary: 'Listar todos los documentos de referencia' })
-  @ApiResponse({ status: 200, description: 'Lista de documentos de referencia obtenida exitosamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de documentos de referencia obtenida exitosamente.',
+  })
   findAllDocumentosReferencia() {
     return this.service.findAllDocumentosReferencia();
   }
@@ -262,8 +336,14 @@ export class RecursosController {
   @Get('documentos-referencia/:id')
   @ApiOperation({ summary: 'Obtener un documento de referencia por ID' })
   @ApiParam({ name: 'id', description: 'ID del documento de referencia' })
-  @ApiResponse({ status: 200, description: 'Documento de referencia encontrado.' })
-  @ApiResponse({ status: 404, description: 'Documento de referencia no encontrado.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Documento de referencia encontrado.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Documento de referencia no encontrado.',
+  })
   findOneDocumentoReferencia(@Param('id', ParseIntPipe) id: number) {
     return this.service.findOneDocumentoReferencia(id);
   }
@@ -271,17 +351,34 @@ export class RecursosController {
   @Patch('documentos-referencia/:id')
   @ApiOperation({ summary: 'Actualizar un documento de referencia por ID' })
   @ApiParam({ name: 'id', description: 'ID del documento de referencia' })
-  @ApiResponse({ status: 200, description: 'Documento de referencia actualizado exitosamente.' })
-  @ApiResponse({ status: 404, description: 'Documento de referencia no encontrado.' })
-  updateDocumentoReferencia(@Param('id', ParseIntPipe) id: number, @Body() updateDto: UpdateDocumentoReferenciaDto) {
+  @ApiResponse({
+    status: 200,
+    description: 'Documento de referencia actualizado exitosamente.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Documento de referencia no encontrado.',
+  })
+  updateDocumentoReferencia(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: UpdateDocumentoReferenciaDto,
+  ) {
     return this.service.updateDocumentoReferencia(id, updateDto);
   }
 
   @Delete('documentos-referencia/:id')
-  @ApiOperation({ summary: 'Eliminar un documento de referencia (Borrado lógico)' })
+  @ApiOperation({
+    summary: 'Eliminar un documento de referencia (Borrado lógico)',
+  })
   @ApiParam({ name: 'id', description: 'ID del documento de referencia' })
-  @ApiResponse({ status: 200, description: 'Documento de referencia eliminado exitosamente.' })
-  @ApiResponse({ status: 404, description: 'Documento de referencia no encontrado.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Documento de referencia eliminado exitosamente.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Documento de referencia no encontrado.',
+  })
   removeDocumentoReferencia(@Param('id', ParseIntPipe) id: number) {
     return this.service.removeDocumentoReferencia(id);
   }

@@ -30,4 +30,6 @@ export class CreateDocumentoReferenciaDto {
   id_operaciones?: number[];
 }
 
-export class UpdateDocumentoReferenciaDto extends PartialType(CreateDocumentoReferenciaDto) {}
+export class UpdateDocumentoReferenciaDto extends PartialType(
+  CreateDocumentoReferenciaDto,
+) {}

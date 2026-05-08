@@ -29,10 +29,19 @@ describe('RecursosService', () => {
         { provide: getRepositoryToken(Requisitos), useValue: mockRepository() },
         { provide: getRepositoryToken(Riesgo), useValue: mockRepository() },
         { provide: getRepositoryToken(Control), useValue: mockRepository() },
-        { provide: getRepositoryToken(SistemaInformacion), useValue: mockRepository() },
+        {
+          provide: getRepositoryToken(SistemaInformacion),
+          useValue: mockRepository(),
+        },
         { provide: getRepositoryToken(Equipo), useValue: mockRepository() },
-        { provide: getRepositoryToken(DocumentoReferencia), useValue: mockRepository() },
-        { provide: getRepositoryToken(Procedimiento), useValue: mockRepository() },
+        {
+          provide: getRepositoryToken(DocumentoReferencia),
+          useValue: mockRepository(),
+        },
+        {
+          provide: getRepositoryToken(Procedimiento),
+          useValue: mockRepository(),
+        },
         { provide: getRepositoryToken(Operacion), useValue: mockRepository() },
       ],
     }).compile();

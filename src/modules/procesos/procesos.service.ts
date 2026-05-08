@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Proceso } from './entities/proceso.entity';
@@ -65,6 +70,7 @@ export class ProcesosService {
     try {
       return await this.procesoRepository.save(proceso);
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.code === '23505') {
         throw new ConflictException(
           `Ya existe un proceso con el código ${procesoData.codigo}`,
@@ -127,6 +133,7 @@ export class ProcesosService {
     try {
       return await this.procesoRepository.save(proceso);
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.code === '23505') {
         throw new ConflictException(
           `Ya existe un proceso con el código ${procesoData.codigo}`,
@@ -178,6 +185,7 @@ export class ProcesosService {
     try {
       return await this.procedimientoRepository.save(procedimiento);
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.code === '23505') {
         throw new ConflictException(
           `Ya existe un procedimiento con el código ${procedimientoData.codigo}`,
@@ -211,7 +219,10 @@ export class ProcesosService {
     const { id_instalaciones, ...procedimientoData } = updateDto;
 
     // Verificar unicidad de código si está cambiando
-    if (procedimientoData.codigo && procedimientoData.codigo !== procedimiento.codigo) {
+    if (
+      procedimientoData.codigo &&
+      procedimientoData.codigo !== procedimiento.codigo
+    ) {
       const existing = await this.procedimientoRepository.findOne({
         where: { codigo: procedimientoData.codigo },
       });
@@ -231,7 +242,10 @@ export class ProcesosService {
               id_unidad: In(id_instalaciones),
             })
           : [];
-      if (id_instalaciones.length > 0 && instalaciones.length !== id_instalaciones.length) {
+      if (
+        id_instalaciones.length > 0 &&
+        instalaciones.length !== id_instalaciones.length
+      ) {
         throw new BadRequestException(
           'Una o más instalaciones (unidades) especificadas no existen',
         );
@@ -242,6 +256,7 @@ export class ProcesosService {
     try {
       return await this.procedimientoRepository.save(procedimiento);
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.code === '23505') {
         throw new ConflictException(
           `Ya existe un procedimiento con el código ${procedimientoData.codigo}`,
@@ -270,9 +285,13 @@ export class ProcesosService {
     }
 
     // Validar que el proceso exista
-    const proceso = await this.procesoRepository.findOne({ where: { id_proceso } });
+    const proceso = await this.procesoRepository.findOne({
+      where: { id_proceso },
+    });
     if (!proceso) {
-      throw new BadRequestException(`El proceso con ID ${id_proceso} no existe.`);
+      throw new BadRequestException(
+        `El proceso con ID ${id_proceso} no existe.`,
+      );
     }
 
     const cargoProceso = this.cargoProcesoRepository.create(createDto);
@@ -302,7 +321,7 @@ export class ProcesosService {
     updateDto: UpdateCargoProcesoDto,
   ): Promise<CargoProceso> {
     const cargoProceso = await this.findOneCargoProceso(id);
-    
+
     const { id_cargo, id_proceso } = updateDto;
 
     if (id_cargo) {
@@ -313,9 +332,13 @@ export class ProcesosService {
     }
 
     if (id_proceso) {
-      const proceso = await this.procesoRepository.findOne({ where: { id_proceso } });
+      const proceso = await this.procesoRepository.findOne({
+        where: { id_proceso },
+      });
       if (!proceso) {
-        throw new BadRequestException(`El proceso con ID ${id_proceso} no existe.`);
+        throw new BadRequestException(
+          `El proceso con ID ${id_proceso} no existe.`,
+        );
       }
     }
 

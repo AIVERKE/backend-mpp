@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Operacion } from './entities/operacion.entity';
@@ -6,6 +10,8 @@ import { Actividad } from './entities/actividad.entity';
 import { Accion } from './entities/accion.entity';
 import { OperacionCargo } from './entities/operacion-cargo.entity';
 import { Tarea } from './entities/tarea.entity';
+import { Procedimiento } from '../procesos/entities/procedimiento.entity';
+import { Cargo } from '../estructura-organizacional/entities/cargo.entity';
 import { CreateAccionDto, UpdateAccionDto } from './dto/accion.dto';
 import { CreateActividadDto, UpdateActividadDto } from './dto/actividad.dto';
 import { CreateOperacionDto, UpdateOperacionDto } from './dto/operacion.dto';
@@ -28,6 +34,10 @@ export class FlujoService {
     private readonly operacionCargoRepository: Repository<OperacionCargo>,
     @InjectRepository(Tarea)
     private readonly tareaRepository: Repository<Tarea>,
+    @InjectRepository(Procedimiento)
+    private readonly procedimientoRepository: Repository<Procedimiento>,
+    @InjectRepository(Cargo)
+    private readonly cargoRepository: Repository<Cargo>,
   ) {}
 
   // --- Acciones ---
@@ -65,6 +75,19 @@ export class FlujoService {
   // --- Actividades ---
 
   async createActividad(createDto: CreateActividadDto): Promise<Actividad> {
+    const { id_operaciones } = createDto;
+
+    if (id_operaciones) {
+      const exist = await this.operacionRepository.findOne({
+        where: { id_operaciones },
+      });
+      if (!exist) {
+        throw new BadRequestException(
+          `Operación con ID ${id_operaciones} no encontrada`,
+        );
+      }
+    }
+
     const registro = this.actividadRepository.create(createDto);
     return await this.actividadRepository.save(registro);
   }
@@ -91,6 +114,19 @@ export class FlujoService {
     updateDto: UpdateActividadDto,
   ): Promise<Actividad> {
     const registro = await this.findOneActividad(id);
+    const { id_operaciones } = updateDto;
+
+    if (id_operaciones) {
+      const exist = await this.operacionRepository.findOne({
+        where: { id_operaciones },
+      });
+      if (!exist) {
+        throw new BadRequestException(
+          `Operación con ID ${id_operaciones} no encontrada`,
+        );
+      }
+    }
+
     Object.assign(registro, updateDto);
     return await this.actividadRepository.save(registro);
   }
@@ -103,6 +139,19 @@ export class FlujoService {
   // --- Operaciones ---
 
   async createOperacion(createDto: CreateOperacionDto): Promise<Operacion> {
+    const { id_procedimiento } = createDto;
+
+    if (id_procedimiento) {
+      const exist = await this.procedimientoRepository.findOne({
+        where: { id_procedimiento },
+      });
+      if (!exist) {
+        throw new BadRequestException(
+          `Procedimiento con ID ${id_procedimiento} no encontrado`,
+        );
+      }
+    }
+
     const registro = this.operacionRepository.create(createDto);
     return await this.operacionRepository.save(registro);
   }
@@ -129,6 +178,19 @@ export class FlujoService {
     updateDto: UpdateOperacionDto,
   ): Promise<Operacion> {
     const registro = await this.findOneOperacion(id);
+    const { id_procedimiento } = updateDto;
+
+    if (id_procedimiento) {
+      const exist = await this.procedimientoRepository.findOne({
+        where: { id_procedimiento },
+      });
+      if (!exist) {
+        throw new BadRequestException(
+          `Procedimiento con ID ${id_procedimiento} no encontrado`,
+        );
+      }
+    }
+
     Object.assign(registro, updateDto);
     return await this.operacionRepository.save(registro);
   }
@@ -143,6 +205,26 @@ export class FlujoService {
   async createOperacionCargo(
     createDto: CreateOperacionCargoDto,
   ): Promise<OperacionCargo> {
+    const { id_operacion, id_cargo } = createDto;
+
+    if (id_operacion) {
+      const exist = await this.operacionRepository.findOne({
+        where: { id_operaciones: id_operacion },
+      });
+      if (!exist) {
+        throw new BadRequestException(
+          `Operación con ID ${id_operacion} no encontrada`,
+        );
+      }
+    }
+
+    if (id_cargo) {
+      const exist = await this.cargoRepository.findOne({ where: { id_cargo } });
+      if (!exist) {
+        throw new BadRequestException(`Cargo con ID ${id_cargo} no encontrado`);
+      }
+    }
+
     const registro = this.operacionCargoRepository.create(createDto);
     return await this.operacionCargoRepository.save(registro);
   }
@@ -171,6 +253,26 @@ export class FlujoService {
     updateDto: UpdateOperacionCargoDto,
   ): Promise<OperacionCargo> {
     const registro = await this.findOneOperacionCargo(id);
+    const { id_operacion, id_cargo } = updateDto;
+
+    if (id_operacion) {
+      const exist = await this.operacionRepository.findOne({
+        where: { id_operaciones: id_operacion },
+      });
+      if (!exist) {
+        throw new BadRequestException(
+          `Operación con ID ${id_operacion} no encontrada`,
+        );
+      }
+    }
+
+    if (id_cargo) {
+      const exist = await this.cargoRepository.findOne({ where: { id_cargo } });
+      if (!exist) {
+        throw new BadRequestException(`Cargo con ID ${id_cargo} no encontrado`);
+      }
+    }
+
     Object.assign(registro, updateDto);
     return await this.operacionCargoRepository.save(registro);
   }
@@ -183,6 +285,30 @@ export class FlujoService {
   // --- Tareas ---
 
   async createTarea(createDto: CreateTareaDto): Promise<Tarea> {
+    const { id_actividad, id_accion } = createDto;
+
+    if (id_actividad) {
+      const exist = await this.actividadRepository.findOne({
+        where: { id_actividad },
+      });
+      if (!exist) {
+        throw new BadRequestException(
+          `Actividad con ID ${id_actividad} no encontrada`,
+        );
+      }
+    }
+
+    if (id_accion) {
+      const exist = await this.accionRepository.findOne({
+        where: { id_accion },
+      });
+      if (!exist) {
+        throw new BadRequestException(
+          `Acción con ID ${id_accion} no encontrada`,
+        );
+      }
+    }
+
     const registro = this.tareaRepository.create(createDto);
     return await this.tareaRepository.save(registro);
   }
@@ -206,6 +332,30 @@ export class FlujoService {
 
   async updateTarea(id: number, updateDto: UpdateTareaDto): Promise<Tarea> {
     const registro = await this.findOneTarea(id);
+    const { id_actividad, id_accion } = updateDto;
+
+    if (id_actividad) {
+      const exist = await this.actividadRepository.findOne({
+        where: { id_actividad },
+      });
+      if (!exist) {
+        throw new BadRequestException(
+          `Actividad con ID ${id_actividad} no encontrada`,
+        );
+      }
+    }
+
+    if (id_accion) {
+      const exist = await this.accionRepository.findOne({
+        where: { id_accion },
+      });
+      if (!exist) {
+        throw new BadRequestException(
+          `Acción con ID ${id_accion} no encontrada`,
+        );
+      }
+    }
+
     Object.assign(registro, updateDto);
     return await this.tareaRepository.save(registro);
   }

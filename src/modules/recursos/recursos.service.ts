@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Requisitos } from './entities/requisitos.entity';
@@ -10,9 +14,15 @@ import { DocumentoReferencia } from './entities/documento-referencia.entity';
 import { CreateRequisitosDto, UpdateRequisitosDto } from './dto/requisitos.dto';
 import { CreateRiesgoDto, UpdateRiesgoDto } from './dto/riesgo.dto';
 import { CreateControlDto, UpdateControlDto } from './dto/control.dto';
-import { CreateSistemaInformacionDto, UpdateSistemaInformacionDto } from './dto/sistema-informacion.dto';
+import {
+  CreateSistemaInformacionDto,
+  UpdateSistemaInformacionDto,
+} from './dto/sistema-informacion.dto';
 import { CreateEquipoDto, UpdateEquipoDto } from './dto/equipo.dto';
-import { CreateDocumentoReferenciaDto, UpdateDocumentoReferenciaDto } from './dto/documento-referencia.dto';
+import {
+  CreateDocumentoReferenciaDto,
+  UpdateDocumentoReferenciaDto,
+} from './dto/documento-referencia.dto';
 import { Procedimiento } from '../procesos/entities/procedimiento.entity';
 import { Operacion } from '../flujo/entities/operacion.entity';
 
@@ -45,7 +55,9 @@ export class RecursosService {
         where: { id_operaciones: createDto.id_operacion },
       });
       if (!operacion) {
-        throw new BadRequestException(`La operación con ID ${createDto.id_operacion} no existe.`);
+        throw new BadRequestException(
+          `La operación con ID ${createDto.id_operacion} no existe.`,
+        );
       }
     }
 
@@ -67,15 +79,20 @@ export class RecursosService {
     return requisito;
   }
 
-  async updateRequisitos(id: number, updateDto: UpdateRequisitosDto): Promise<Requisitos> {
+  async updateRequisitos(
+    id: number,
+    updateDto: UpdateRequisitosDto,
+  ): Promise<Requisitos> {
     const requisito = await this.findOneRequisitos(id);
-    
+
     if (updateDto.id_operacion) {
       const operacion = await this.operacionRepository.findOne({
         where: { id_operaciones: updateDto.id_operacion },
       });
       if (!operacion) {
-        throw new BadRequestException(`La operación con ID ${updateDto.id_operacion} no existe.`);
+        throw new BadRequestException(
+          `La operación con ID ${updateDto.id_operacion} no existe.`,
+        );
       }
     }
 
@@ -96,7 +113,9 @@ export class RecursosService {
         where: { id_operaciones: createDto.id_operacion },
       });
       if (!operacion) {
-        throw new BadRequestException(`La operación con ID ${createDto.id_operacion} no existe.`);
+        throw new BadRequestException(
+          `La operación con ID ${createDto.id_operacion} no existe.`,
+        );
       }
     }
 
@@ -120,13 +139,15 @@ export class RecursosService {
 
   async updateRiesgo(id: number, updateDto: UpdateRiesgoDto): Promise<Riesgo> {
     const riesgo = await this.findOneRiesgo(id);
-    
+
     if (updateDto.id_operacion) {
       const operacion = await this.operacionRepository.findOne({
         where: { id_operaciones: updateDto.id_operacion },
       });
       if (!operacion) {
-        throw new BadRequestException(`La operación con ID ${updateDto.id_operacion} no existe.`);
+        throw new BadRequestException(
+          `La operación con ID ${updateDto.id_operacion} no existe.`,
+        );
       }
     }
 
@@ -147,7 +168,9 @@ export class RecursosService {
         where: { id_operaciones: createDto.id_operacion },
       });
       if (!operacion) {
-        throw new BadRequestException(`La operación con ID ${createDto.id_operacion} no existe.`);
+        throw new BadRequestException(
+          `La operación con ID ${createDto.id_operacion} no existe.`,
+        );
       }
     }
 
@@ -169,15 +192,20 @@ export class RecursosService {
     return control;
   }
 
-  async updateControl(id: number, updateDto: UpdateControlDto): Promise<Control> {
+  async updateControl(
+    id: number,
+    updateDto: UpdateControlDto,
+  ): Promise<Control> {
     const control = await this.findOneControl(id);
-    
+
     if (updateDto.id_operacion) {
       const operacion = await this.operacionRepository.findOne({
         where: { id_operaciones: updateDto.id_operacion },
       });
       if (!operacion) {
-        throw new BadRequestException(`La operación con ID ${updateDto.id_operacion} no existe.`);
+        throw new BadRequestException(
+          `La operación con ID ${updateDto.id_operacion} no existe.`,
+        );
       }
     }
 
@@ -192,7 +220,9 @@ export class RecursosService {
 
   // --- SistemaInformacion ---
 
-  async createSistemaInformacion(createDto: CreateSistemaInformacionDto): Promise<SistemaInformacion> {
+  async createSistemaInformacion(
+    createDto: CreateSistemaInformacionDto,
+  ): Promise<SistemaInformacion> {
     const { id_procedimientos, ...data } = createDto;
     const sistema = this.sistemaInformacionRepository.create(data);
 
@@ -210,7 +240,9 @@ export class RecursosService {
   }
 
   async findAllSistemasInformacion(): Promise<SistemaInformacion[]> {
-    return await this.sistemaInformacionRepository.find({ relations: ['procedimientos'] });
+    return await this.sistemaInformacionRepository.find({
+      relations: ['procedimientos'],
+    });
   }
 
   async findOneSistemaInformacion(id: number): Promise<SistemaInformacion> {
@@ -219,11 +251,16 @@ export class RecursosService {
       relations: ['procedimientos'],
     });
     if (!sistema)
-      throw new NotFoundException(`Sistema de Información con ID ${id} no encontrado`);
+      throw new NotFoundException(
+        `Sistema de Información con ID ${id} no encontrado`,
+      );
     return sistema;
   }
 
-  async updateSistemaInformacion(id: number, updateDto: UpdateSistemaInformacionDto): Promise<SistemaInformacion> {
+  async updateSistemaInformacion(
+    id: number,
+    updateDto: UpdateSistemaInformacionDto,
+  ): Promise<SistemaInformacion> {
     const sistema = await this.findOneSistemaInformacion(id);
     const { id_procedimientos, ...data } = updateDto;
 
@@ -231,7 +268,9 @@ export class RecursosService {
 
     if (id_procedimientos) {
       if (id_procedimientos.length > 0) {
-        const procedimientos = await this.procedimientoRepository.findBy({ id_procedimiento: In(id_procedimientos) });
+        const procedimientos = await this.procedimientoRepository.findBy({
+          id_procedimiento: In(id_procedimientos),
+        });
         if (procedimientos.length !== id_procedimientos.length) {
           throw new BadRequestException(`Uno o más procedimientos no existen.`);
         }
@@ -290,7 +329,9 @@ export class RecursosService {
 
     if (id_procedimientos) {
       if (id_procedimientos.length > 0) {
-        const procedimientos = await this.procedimientoRepository.findBy({ id_procedimiento: In(id_procedimientos) });
+        const procedimientos = await this.procedimientoRepository.findBy({
+          id_procedimiento: In(id_procedimientos),
+        });
         if (procedimientos.length !== id_procedimientos.length) {
           throw new BadRequestException(`Uno o más procedimientos no existen.`);
         }
@@ -310,7 +351,9 @@ export class RecursosService {
 
   // --- DocumentoReferencia ---
 
-  async createDocumentoReferencia(createDto: CreateDocumentoReferenciaDto): Promise<DocumentoReferencia> {
+  async createDocumentoReferencia(
+    createDto: CreateDocumentoReferenciaDto,
+  ): Promise<DocumentoReferencia> {
     const { id_operaciones, ...data } = createDto;
     const documento = this.documentoReferenciaRepository.create(data);
 
@@ -328,7 +371,9 @@ export class RecursosService {
   }
 
   async findAllDocumentosReferencia(): Promise<DocumentoReferencia[]> {
-    return await this.documentoReferenciaRepository.find({ relations: ['operaciones'] });
+    return await this.documentoReferenciaRepository.find({
+      relations: ['operaciones'],
+    });
   }
 
   async findOneDocumentoReferencia(id: number): Promise<DocumentoReferencia> {
@@ -337,11 +382,16 @@ export class RecursosService {
       relations: ['operaciones'],
     });
     if (!documento)
-      throw new NotFoundException(`Documento de Referencia con ID ${id} no encontrado`);
+      throw new NotFoundException(
+        `Documento de Referencia con ID ${id} no encontrado`,
+      );
     return documento;
   }
 
-  async updateDocumentoReferencia(id: number, updateDto: UpdateDocumentoReferenciaDto): Promise<DocumentoReferencia> {
+  async updateDocumentoReferencia(
+    id: number,
+    updateDto: UpdateDocumentoReferenciaDto,
+  ): Promise<DocumentoReferencia> {
     const documento = await this.findOneDocumentoReferencia(id);
     const { id_operaciones, ...data } = updateDto;
 
@@ -349,7 +399,9 @@ export class RecursosService {
 
     if (id_operaciones) {
       if (id_operaciones.length > 0) {
-        const operaciones = await this.operacionRepository.findBy({ id_operaciones: In(id_operaciones) });
+        const operaciones = await this.operacionRepository.findBy({
+          id_operaciones: In(id_operaciones),
+        });
         if (operaciones.length !== id_operaciones.length) {
           throw new BadRequestException(`Uno o más operaciones no existen.`);
         }
