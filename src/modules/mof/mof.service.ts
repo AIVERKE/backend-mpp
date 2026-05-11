@@ -136,9 +136,9 @@ export class MofService implements OnModuleInit {
         this.httpService.get<{ data: MofPersonalDto[] }>(url),
       );
       return response.data.data || [];
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Si es un 404, simplemente la unidad no tiene personal asignado en el MOF
-      if (error.response?.status === 404) {
+      if ((error as any).response?.status === 404) {
         this.logger.warn(
           `Unidad ${id_unidad} no tiene personal registrado en el MOF (404).`,
         );
