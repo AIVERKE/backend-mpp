@@ -4,6 +4,9 @@ import {
   Column,
   ManyToMany,
   JoinTable,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Procedimiento } from '../../procesos/entities/procedimiento.entity';
 
@@ -37,4 +40,19 @@ export class Normativa {
     },
   })
   procedimientos: Procedimiento[];
+
+  @CreateDateColumn({ type: 'timestamp' })
+  creado_en: Date;
+
+  @Column({ nullable: true })
+  creado_por: number;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  modificado_en: Date;
+
+  @Column({ nullable: true })
+  modificado_por: number;
+
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
+  eliminado_en: Date;
 }
