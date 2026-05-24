@@ -1,10 +1,12 @@
-import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnprocessableEntityException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Unidad } from './entities/unidad.entity';
 import { Cargo } from './entities/cargo.entity';
+import { Instalacion } from './entities/instalacion.entity';
 import { CreateCargoDto, UpdateCargoDto } from './dto/cargo.dto';
 import { CreateUnidadDto, UpdateUnidadDto } from './dto/unidad.dto';
+import { CreateInstalacionDto, UpdateInstalacionDto } from './dto/instalacion.dto';
 
 @Injectable()
 export class EstructuraOrganizacionalService {
@@ -13,6 +15,8 @@ export class EstructuraOrganizacionalService {
     private readonly unidadRepository: Repository<Unidad>,
     @InjectRepository(Cargo)
     private readonly cargoRepository: Repository<Cargo>,
+    @InjectRepository(Instalacion)
+    private readonly instalacionRepository: Repository<Instalacion>,
   ) {}
 
   // --- Cargos ---
@@ -119,5 +123,69 @@ export class EstructuraOrganizacionalService {
   async removeUnidad(id: number): Promise<void> {
     const unidad = await this.findOneUnidad(id);
     await this.unidadRepository.softRemove(unidad);
+  }
+
+  // --- Instalaciones ---
+
+  async createInstalacion(
+    createInstalacionDto: CreateInstalacionDto,
+  ): Promise<Instalacion> {
+    const { id_unidad } = createInstalacionDto;
+
+    const unidad = await this.unidadRepository.findOne({
+      where: { id_unidad },
+    });
+    if (!unidad) {
+      throw new BadRequestException(
+        `Unidad con ID ${id_unidad} no encontrada`,
+      );
+    }
+
+    const instalacion = this.instalacionRepository.create(createInstalacionDto);
+    const saved = await this.instalacionRepository.save(instalacion);
+    return await this.findOneInstalacion(saved.id_instalacion);
+  }
+
+  async findAllInstalaciones(): Promise<Instalacion[]> {
+    return await this.instalacionRepository.find({ relations: ['unidad'] });
+  }
+
+  async findOneInstalacion(id: number): Promise<Instalacion> {
+    const instalacion = await this.instalacionRepository.findOne({
+      where: { id_instalacion: id },
+      relations: ['unidad'],
+    });
+    if (!instalacion) {
+      throw new NotFoundException(`Instalación con ID ${id} no encontrada`);
+    }
+    return instalacion;
+  }
+
+  async updateInstalacion(
+    id: number,
+    updateInstalacionDto: UpdateInstalacionDto,
+  ): Promise<Instalacion> {
+    const instalacion = await this.findOneInstalacion(id);
+    const { id_unidad } = updateInstalacionDto;
+
+    if (id_unidad !== undefined) {
+      const unidad = await this.unidadRepository.findOne({
+        where: { id_unidad },
+      });
+      if (!unidad) {
+        throw new BadRequestException(
+          `Unidad con ID ${id_unidad} no encontrada`,
+        );
+      }
+    }
+
+    Object.assign(instalacion, updateInstalacionDto);
+    await this.instalacionRepository.save(instalacion);
+    return await this.findOneInstalacion(id);
+  }
+
+  async removeInstalacion(id: number): Promise<void> {
+    const instalacion = await this.findOneInstalacion(id);
+    await this.instalacionRepository.softRemove(instalacion);
   }
 }

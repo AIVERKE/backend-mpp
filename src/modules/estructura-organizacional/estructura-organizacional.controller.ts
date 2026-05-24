@@ -12,6 +12,10 @@ import { EstructuraOrganizacionalService } from './estructura-organizacional.ser
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { CreateCargoDto, UpdateCargoDto } from './dto/cargo.dto';
 import { CreateUnidadDto, UpdateUnidadDto } from './dto/unidad.dto';
+import {
+  CreateInstalacionDto,
+  UpdateInstalacionDto,
+} from './dto/instalacion.dto';
 
 @ApiTags('Estructura Organizacional')
 @Controller('estructura-organizacional')
@@ -128,5 +132,71 @@ export class EstructuraOrganizacionalController {
   @ApiResponse({ status: 404, description: 'Unidad no encontrada.' })
   removeUnidad(@Param('id', ParseIntPipe) id: number) {
     return this.service.removeUnidad(id);
+  }
+
+  // --- Instalaciones ---
+
+  @Post('instalaciones')
+  @ApiOperation({ summary: 'Crear una nueva instalación' })
+  @ApiResponse({
+    status: 201,
+    description: 'Instalación creada exitosamente.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Datos inválidos o unidad no encontrada.',
+  })
+  createInstalacion(@Body() createInstalacionDto: CreateInstalacionDto) {
+    return this.service.createInstalacion(createInstalacionDto);
+  }
+
+  @Get('instalaciones')
+  @ApiOperation({ summary: 'Listar todas las instalaciones' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de instalaciones obtenida exitosamente.',
+  })
+  findAllInstalaciones() {
+    return this.service.findAllInstalaciones();
+  }
+
+  @Get('instalaciones/:id')
+  @ApiOperation({ summary: 'Obtener una instalación por ID' })
+  @ApiParam({ name: 'id', description: 'ID de la instalación' })
+  @ApiResponse({ status: 200, description: 'Instalación encontrada.' })
+  @ApiResponse({ status: 404, description: 'Instalación no encontrada.' })
+  findOneInstalacion(@Param('id', ParseIntPipe) id: number) {
+    return this.service.findOneInstalacion(id);
+  }
+
+  @Patch('instalaciones/:id')
+  @ApiOperation({ summary: 'Actualizar una instalación por ID' })
+  @ApiParam({ name: 'id', description: 'ID de la instalación' })
+  @ApiResponse({
+    status: 200,
+    description: 'Instalación actualizada exitosamente.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Datos inválidos o unidad no encontrada.',
+  })
+  @ApiResponse({ status: 404, description: 'Instalación no encontrada.' })
+  updateInstalacion(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateInstalacionDto: UpdateInstalacionDto,
+  ) {
+    return this.service.updateInstalacion(id, updateInstalacionDto);
+  }
+
+  @Delete('instalaciones/:id')
+  @ApiOperation({ summary: 'Eliminar una instalación (Borrado lógico)' })
+  @ApiParam({ name: 'id', description: 'ID de la instalación' })
+  @ApiResponse({
+    status: 200,
+    description: 'Instalación eliminada exitosamente.',
+  })
+  @ApiResponse({ status: 404, description: 'Instalación no encontrada.' })
+  removeInstalacion(@Param('id', ParseIntPipe) id: number) {
+    return this.service.removeInstalacion(id);
   }
 }

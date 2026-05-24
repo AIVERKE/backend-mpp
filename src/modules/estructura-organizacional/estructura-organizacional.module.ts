@@ -4,9 +4,10 @@ import { EstructuraOrganizacionalService } from './estructura-organizacional.ser
 import { EstructuraOrganizacionalController } from './estructura-organizacional.controller';
 import { Unidad } from './entities/unidad.entity';
 import { Cargo } from './entities/cargo.entity';
+import { Instalacion } from './entities/instalacion.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Unidad, Cargo])],
+  imports: [TypeOrmModule.forFeature([Unidad, Cargo, Instalacion])],
   controllers: [EstructuraOrganizacionalController],
   providers: [EstructuraOrganizacionalService],
   exports: [EstructuraOrganizacionalService],
