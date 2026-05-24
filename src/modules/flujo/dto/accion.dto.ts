@@ -10,6 +10,12 @@ export class CreateAccionDto {
     },
   })
   nombre_accion: string;
+
+  @ApiProperty({
+    description: 'ID de la figura asociada a la acción',
+    example: 2,
+  })
+  id_figura: number;
 }
 
 export class UpdateAccionDto extends PartialType(CreateAccionDto) {}

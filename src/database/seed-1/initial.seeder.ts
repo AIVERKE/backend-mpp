@@ -10,6 +10,7 @@ import { Procedimiento } from '../../modules/procesos/entities/procedimiento.ent
 import { Actividad } from '../../modules/flujo/entities/actividad.entity';
 import { Operacion } from '../../modules/flujo/entities/operacion.entity';
 import { Accion } from '../../modules/flujo/entities/accion.entity';
+import { Figura } from '../../modules/flujo/entities/figura.entity';
 import { Tarea } from '../../modules/flujo/entities/tarea.entity';
 import { Requisitos } from '../../modules/recursos/entities/requisitos.entity';
 import { Riesgo } from '../../modules/recursos/entities/riesgo.entity';
@@ -408,25 +409,38 @@ export default class InitialSeeder implements Seeder {
       })) as any[],
     );
 
+    const figuraRepo = dataSource.getRepository(Figura);
+    const figuras = await figuraRepo.save([
+      { nombre: 'Círculo', codigo: 'circulo' },
+      { nombre: 'Rectángulo', codigo: 'rectangulo' },
+      { nombre: 'Rombo', codigo: 'rombo' },
+    ] as any[]);
+
+    const figuraRectangulo = figuras.find(
+      (f: any) => f.codigo === 'rectangulo',
+    );
+    const figuraCirculo = figuras.find((f: any) => f.codigo === 'circulo');
+    const figuraRombo = figuras.find((f: any) => f.codigo === 'rombo');
+
     const accionRepo = dataSource.getRepository(Accion);
     const acciones = await accionRepo.save([
-      { nombre_accion: 'Verificar' },
-      { nombre_accion: 'Registrar' },
-      { nombre_accion: 'Aprobar' },
-      { nombre_accion: 'Revisar' },
-      { nombre_accion: 'Enviar' },
-      { nombre_accion: 'Recibir' },
-      { nombre_accion: 'Analizar' },
-      { nombre_accion: 'Ejecutar' },
-      { nombre_accion: 'Notificar' },
-      { nombre_accion: 'Archivar' },
+      { nombre_accion: 'Verificar', figura: figuraRectangulo },
+      { nombre_accion: 'Registrar', figura: figuraRectangulo },
+      { nombre_accion: 'Aprobar', figura: figuraRectangulo },
+      { nombre_accion: 'Revisar', figura: figuraRombo },
+      { nombre_accion: 'Enviar', figura: figuraRectangulo },
+      { nombre_accion: 'Recibir', figura: figuraRectangulo },
+      { nombre_accion: 'Analizar', figura: figuraRombo },
+      { nombre_accion: 'Ejecutar', figura: figuraRectangulo },
+      { nombre_accion: 'Notificar', figura: figuraRectangulo },
+      { nombre_accion: 'Archivar', figura: figuraCirculo },
     ] as any[]);
 
     const tareaRepo = dataSource.getRepository(Tarea);
     await tareaRepo.save(
       actividades.map((act: any, i: number) => ({
-        nombre: `Tarea ${i + 1}`,
         descripcion: `Descripción de tarea ${i + 1}`,
+        texto_figura: `Tarea ${i + 1}`,
         orden: 1,
         actividad: act,
         accion: acciones[i % 10],

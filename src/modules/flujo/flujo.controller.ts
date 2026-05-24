@@ -11,6 +11,7 @@ import {
 import { FlujoService } from './flujo.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { CreateAccionDto, UpdateAccionDto } from './dto/accion.dto';
+import { CreateFiguraDto, UpdateFiguraDto } from './dto/figura.dto';
 import { CreateActividadDto, UpdateActividadDto } from './dto/actividad.dto';
 import { CreateOperacionDto, UpdateOperacionDto } from './dto/operacion.dto';
 import {
@@ -134,6 +135,56 @@ export class FlujoController {
   @ApiResponse({ status: 404, description: 'Actividad no encontrada.' })
   removeActividad(@Param('id', ParseIntPipe) id: number) {
     return this.service.removeActividad(id);
+  }
+
+  // --- Figuras ---
+
+  @Post('figuras')
+  @ApiOperation({ summary: 'Crear una nueva figura' })
+  @ApiResponse({ status: 201, description: 'Figura creada exitosamente.' })
+  @ApiResponse({ status: 400, description: 'Datos inválidos.' })
+  createFigura(@Body() createDto: CreateFiguraDto) {
+    return this.service.createFigura(createDto);
+  }
+
+  @Get('figuras')
+  @ApiOperation({ summary: 'Listar todas las figuras' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de figuras obtenida exitosamente.',
+  })
+  findAllFiguras() {
+    return this.service.findAllFiguras();
+  }
+
+  @Get('figuras/:id')
+  @ApiOperation({ summary: 'Obtener una figura por ID' })
+  @ApiParam({ name: 'id', description: 'ID de la figura' })
+  @ApiResponse({ status: 200, description: 'Figura encontrada.' })
+  @ApiResponse({ status: 404, description: 'Figura no encontrada.' })
+  findOneFigura(@Param('id', ParseIntPipe) id: number) {
+    return this.service.findOneFigura(id);
+  }
+
+  @Patch('figuras/:id')
+  @ApiOperation({ summary: 'Actualizar una figura por ID' })
+  @ApiParam({ name: 'id', description: 'ID de la figura' })
+  @ApiResponse({ status: 200, description: 'Figura actualizada exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Figura no encontrada.' })
+  updateFigura(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: UpdateFiguraDto,
+  ) {
+    return this.service.updateFigura(id, updateDto);
+  }
+
+  @Delete('figuras/:id')
+  @ApiOperation({ summary: 'Eliminar una figura (Borrado lógico)' })
+  @ApiParam({ name: 'id', description: 'ID de la figura' })
+  @ApiResponse({ status: 200, description: 'Figura eliminada exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Figura no encontrada.' })
+  removeFigura(@Param('id', ParseIntPipe) id: number) {
+    return this.service.removeFigura(id);
   }
 
   // --- Acciones ---

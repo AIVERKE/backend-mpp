@@ -2,28 +2,21 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
 } from 'typeorm';
-import { Figura } from './figura.entity';
 
-@Entity('Accion')
-export class Accion {
+@Entity('Figura')
+export class Figura {
   @PrimaryGeneratedColumn()
-  id_accion: number;
-
-  @Column()
-  nombre_accion: string;
-
-  @Column({ name: 'id_figura' })
   id_figura: number;
 
-  @ManyToOne(() => Figura)
-  @JoinColumn({ name: 'id_figura' })
-  figura: Figura;
+  @Column()
+  nombre: string;
+
+  @Column({ unique: true })
+  codigo: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;

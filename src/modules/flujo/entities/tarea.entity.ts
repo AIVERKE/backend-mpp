@@ -25,6 +25,9 @@ export class Tarea {
   @Column({ type: 'text' })
   descripcion: string;
 
+  @Column({ name: 'texto_figura' })
+  texto_figura: string;
+
   @Column({ nullable: true })
   orden: number;
 
