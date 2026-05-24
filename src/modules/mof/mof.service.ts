@@ -70,6 +70,17 @@ export class MofService implements OnModuleInit {
     }
   }
 
+  /**
+   * Sincroniza Unidades desde el MOF usando Upsert seguro.
+   *
+   * IMPORTANTE: Este método reemplaza el antiguo TRUNCATE CASCADE que destruía
+   * todas las relaciones con procesos y procedimientos al re-sincronizar.
+   *
+   * Estrategia:
+   * - Si la Unidad existe (por id_unidad) → UPDATE solo campos de texto
+   * - Si no existe → INSERT
+   * - Si existía antes pero ya no viene del MOF → Soft Delete (deleted_at)
+   */
   async sync() {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -80,15 +91,9 @@ export class MofService implements OnModuleInit {
       const mofUnidades = await this.fetchUnidades();
 
       this.logger.log(
-        `Limpiando tabla Unidad (${mofUnidades.length} registros a insertar)...`,
+        `MOF retornó ${mofUnidades.length} unidades. Iniciando upsert...`,
       );
 
-      // Limpieza completa con CASCADE para manejar relaciones
-      await queryRunner.query(
-        'TRUNCATE TABLE "Unidad" RESTART IDENTITY CASCADE',
-      );
-
-      // Inserción en batch
       const unidadesToSave = mofUnidades.map((u) => ({
         id_unidad: u.id,
         nombre: u.nombre,
@@ -97,13 +102,27 @@ export class MofService implements OnModuleInit {
         tipo_unidad: u.tipo,
       }));
 
-      await queryRunner.manager.insert(Unidad, unidadesToSave);
+      // Upsert: preserva los IDs existentes y sus relaciones con procesos
+      await queryRunner.manager.upsert(Unidad, unidadesToSave, ['id_unidad']);
+
+      // Soft delete: desactivar las unidades que ya no existen en el MOF
+      const mofIds = unidadesToSave.map((u) => u.id_unidad);
+      if (mofIds.length > 0) {
+        await queryRunner.manager
+          .createQueryBuilder()
+          .softDelete()
+          .from(Unidad)
+          .where('id_unidad NOT IN (:...ids) AND deleted_at IS NULL', {
+            ids: mofIds,
+          })
+          .execute();
+      }
 
       await queryRunner.commitTransaction();
 
       this.lastSync = new Date();
       this.syncStatus = 'Éxito';
-      this.logger.log('Sincronización MOF completada exitosamente.');
+      this.logger.log('Sincronización MOF de unidades completada exitosamente.');
 
       return {
         total: unidadesToSave.length,
@@ -157,6 +176,18 @@ export class MofService implements OnModuleInit {
     return await this.cargoRepository.find();
   }
 
+  /**
+   * Sincroniza Cargos desde el MOF usando Upsert seguro.
+   *
+   * IMPORTANTE: Este método reemplaza el antiguo TRUNCATE CASCADE que destruía
+   * todas las asignaciones de cargos en procesos y procedimientos.
+   *
+   * Estrategia:
+   * - Si el Cargo existe (por id_cargo) → UPDATE nombre y descripcion
+   * - Si no existe → INSERT
+   * - Si existía antes pero ya no viene del MOF → Soft Delete (deleted_at)
+   * - Tabla pivote unidad_cargos: solo INSERT nuevas relaciones (ON CONFLICT DO NOTHING)
+   */
   async syncCargos() {
     try {
       this.logger.log('Iniciando sincronización de cargos desde MOF...');
@@ -168,7 +199,7 @@ export class MofService implements OnModuleInit {
         );
       }
 
-      const cargosMap = new Map<number, Cargo>();
+      const cargosMap = new Map<number, { id_cargo: number; nombre: string; descripcion: string }>();
       const unitCargosMap = new Map<number, number[]>();
 
       this.logger.log(`Procesando ${unidades.length} unidades en lotes...`);
@@ -196,7 +227,7 @@ export class MofService implements OnModuleInit {
                     id_cargo: p.id,
                     nombre: p.descripcion,
                     descripcion: p.detalle || '',
-                  } as Cargo);
+                  });
                 }
                 cargoIds.push(p.id);
               }
@@ -224,17 +255,26 @@ export class MofService implements OnModuleInit {
       await queryRunner.startTransaction();
 
       try {
-        this.logger.log('Limpiando tabla Cargo y relaciones...');
-        await queryRunner.query(
-          'TRUNCATE TABLE "cargo" RESTART IDENTITY CASCADE',
-        );
-
-        this.logger.log(`Insertando ${cargosMap.size} cargos únicos...`);
         const cargosToSave = Array.from(cargosMap.values());
-        if (cargosToSave.length > 0) {
-          await queryRunner.manager.insert(Cargo, cargosToSave);
+
+        // Upsert: preserva los IDs existentes y sus relaciones con procesos
+        this.logger.log(`Realizando upsert de ${cargosToSave.length} cargos únicos...`);
+        await queryRunner.manager.upsert(Cargo, cargosToSave, ['id_cargo']);
+
+        // Soft delete: desactivar los cargos que ya no existen en el MOF
+        const mofCargoIds = Array.from(cargosMap.keys());
+        if (mofCargoIds.length > 0) {
+          await queryRunner.manager
+            .createQueryBuilder()
+            .softDelete()
+            .from(Cargo)
+            .where('id_cargo NOT IN (:...ids) AND deleted_at IS NULL', {
+              ids: mofCargoIds,
+            })
+            .execute();
         }
 
+        // Tabla pivote: insertar SOLO relaciones nuevas sin borrar las existentes
         const relations: { id_unidad: number; id_cargo: number }[] = [];
         for (const [id_unidad, cargoIds] of unitCargosMap.entries()) {
           for (const id_cargo of cargoIds) {
@@ -248,6 +288,7 @@ export class MofService implements OnModuleInit {
         );
 
         if (relations.length > 0) {
+          // ON CONFLICT DO NOTHING preserva relaciones existentes sin duplicar
           // Insertar en fragmentos de 500 para evitar límites de parámetros de SQL
           const RELATION_BATCH_SIZE = 500;
           for (let i = 0; i < relations.length; i += RELATION_BATCH_SIZE) {
@@ -256,7 +297,7 @@ export class MofService implements OnModuleInit {
               .map((r) => `(${r.id_unidad}, ${r.id_cargo})`)
               .join(', ');
             await queryRunner.query(
-              `INSERT INTO unidad_cargos (id_unidad, id_cargo) VALUES ${values}`,
+              `INSERT INTO unidad_cargos (id_unidad, id_cargo) VALUES ${values} ON CONFLICT DO NOTHING`,
             );
           }
         }
