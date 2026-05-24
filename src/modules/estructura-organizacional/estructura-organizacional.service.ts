@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Unidad } from './entities/unidad.entity';
@@ -18,8 +18,22 @@ export class EstructuraOrganizacionalService {
   // --- Cargos ---
 
   async createCargo(createCargoDto: CreateCargoDto): Promise<Cargo> {
-    const cargo = this.cargoRepository.create(createCargoDto);
-    return await this.cargoRepository.save(cargo);
+    try {
+      const cargo = this.cargoRepository.create(createCargoDto);
+      return await this.cargoRepository.save(cargo);
+    } catch (error: any) {
+      // Violación NOT NULL en id_cargo: la columna no tiene autoincrement porque
+      // los IDs los provee el sistema MOF externo. Los cargos no pueden crearse
+      // manualmente sin un ID proveniente del MOF.
+      if (error?.code === '23502' && error?.column === 'id_cargo') {
+        throw new UnprocessableEntityException(
+          'No es posible crear un cargo manualmente. ' +
+          'Los cargos son gestionados por el sistema MOF y sus IDs son asignados externamente. ' +
+          'Para agregar cargos, utilizá el endpoint POST /mof/cargos/sync.',
+        );
+      }
+      throw error;
+    }
   }
 
   async findAllCargos(): Promise<Cargo[]> {

@@ -21,9 +21,21 @@ export class EstructuraOrganizacionalController {
   // --- Cargos ---
 
   @Post('cargos')
-  @ApiOperation({ summary: 'Crear un nuevo cargo' })
+  @ApiOperation({
+    summary: 'Crear un nuevo cargo',
+    description:
+      '⚠️ Los cargos son gestionados por el sistema MOF externo. ' +
+      'Este endpoint requiere que el ID del cargo sea provisto por el MOF. ' +
+      'Para sincronizar cargos desde el MOF, utilizá POST /mof/cargos/sync.',
+  })
   @ApiResponse({ status: 201, description: 'Cargo creado exitosamente.' })
   @ApiResponse({ status: 400, description: 'Datos inválidos.' })
+  @ApiResponse({
+    status: 422,
+    description:
+      'No es posible crear el cargo. Los IDs de cargo son asignados por el sistema MOF externo. ' +
+      'Utilizá POST /mof/cargos/sync para importar cargos.',
+  })
   createCargo(@Body() createCargoDto: CreateCargoDto) {
     return this.service.createCargo(createCargoDto);
   }
