@@ -3,12 +3,14 @@ import {
   PrimaryColumn,
   Column,
   ManyToMany,
+  OneToMany,
   JoinTable,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
 } from 'typeorm';
 import { Cargo } from './cargo.entity';
+import { Instalacion } from './instalacion.entity';
 
 @Entity('Unidad')
 export class Unidad {
@@ -34,6 +36,9 @@ export class Unidad {
     inverseJoinColumn: { name: 'id_cargo', referencedColumnName: 'id_cargo' },
   })
   cargos: Cargo[];
+
+  @OneToMany(() => Instalacion, (instalacion) => instalacion.unidad)
+  instalaciones: Instalacion[];
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
