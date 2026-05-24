@@ -6,6 +6,7 @@ import { Operacion } from './entities/operacion.entity';
 import { OperacionCargo } from './entities/operacion-cargo.entity';
 import { Actividad } from './entities/actividad.entity';
 import { Accion } from './entities/accion.entity';
+import { Figura } from './entities/figura.entity';
 import { Tarea } from './entities/tarea.entity';
 import { Procedimiento } from '../procesos/entities/procedimiento.entity';
 import { Cargo } from '../estructura-organizacional/entities/cargo.entity';
@@ -17,6 +18,7 @@ import { Cargo } from '../estructura-organizacional/entities/cargo.entity';
       OperacionCargo,
       Actividad,
       Accion,
+      Figura,
       Tarea,
       Procedimiento,
       Cargo,

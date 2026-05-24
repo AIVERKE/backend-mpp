@@ -8,11 +8,13 @@ import { Repository } from 'typeorm';
 import { Operacion } from './entities/operacion.entity';
 import { Actividad } from './entities/actividad.entity';
 import { Accion } from './entities/accion.entity';
+import { Figura } from './entities/figura.entity';
 import { OperacionCargo } from './entities/operacion-cargo.entity';
 import { Tarea } from './entities/tarea.entity';
 import { Procedimiento } from '../procesos/entities/procedimiento.entity';
 import { Cargo } from '../estructura-organizacional/entities/cargo.entity';
 import { CreateAccionDto, UpdateAccionDto } from './dto/accion.dto';
+import { CreateFiguraDto, UpdateFiguraDto } from './dto/figura.dto';
 import { CreateActividadDto, UpdateActividadDto } from './dto/actividad.dto';
 import { CreateOperacionDto, UpdateOperacionDto } from './dto/operacion.dto';
 import {
@@ -30,6 +32,8 @@ export class FlujoService {
     private readonly actividadRepository: Repository<Actividad>,
     @InjectRepository(Accion)
     private readonly accionRepository: Repository<Accion>,
+    @InjectRepository(Figura)
+    private readonly figuraRepository: Repository<Figura>,
     @InjectRepository(OperacionCargo)
     private readonly operacionCargoRepository: Repository<OperacionCargo>,
     @InjectRepository(Tarea)
@@ -40,20 +44,67 @@ export class FlujoService {
     private readonly cargoRepository: Repository<Cargo>,
   ) {}
 
+  // --- Figuras ---
+
+  async createFigura(createDto: CreateFiguraDto): Promise<Figura> {
+    const registro = this.figuraRepository.create(createDto);
+    return await this.figuraRepository.save(registro);
+  }
+
+  async findAllFiguras(): Promise<Figura[]> {
+    return await this.figuraRepository.find();
+  }
+
+  async findOneFigura(id: number): Promise<Figura> {
+    const registro = await this.figuraRepository.findOne({
+      where: { id_figura: id },
+    });
+    if (!registro) {
+      throw new NotFoundException(`Figura con ID ${id} no encontrada`);
+    }
+    return registro;
+  }
+
+  async updateFigura(id: number, updateDto: UpdateFiguraDto): Promise<Figura> {
+    const registro = await this.findOneFigura(id);
+    Object.assign(registro, updateDto);
+    return await this.figuraRepository.save(registro);
+  }
+
+  async removeFigura(id: number): Promise<void> {
+    const registro = await this.findOneFigura(id);
+    await this.figuraRepository.softRemove(registro);
+  }
+
   // --- Acciones ---
 
   async createAccion(createDto: CreateAccionDto): Promise<Accion> {
+    const { id_figura } = createDto;
+
+    if (id_figura) {
+      const exist = await this.figuraRepository.findOne({
+        where: { id_figura },
+      });
+      if (!exist) {
+        throw new BadRequestException(
+          `Figura con ID ${id_figura} no encontrada`,
+        );
+      }
+    }
+
     const registro = this.accionRepository.create(createDto);
-    return await this.accionRepository.save(registro);
+    const saved = await this.accionRepository.save(registro);
+    return await this.findOneAccion(saved.id_accion);
   }
 
   async findAllAcciones(): Promise<Accion[]> {
-    return await this.accionRepository.find();
+    return await this.accionRepository.find({ relations: ['figura'] });
   }
 
   async findOneAccion(id: number): Promise<Accion> {
     const registro = await this.accionRepository.findOne({
       where: { id_accion: id },
+      relations: ['figura'],
     });
     if (!registro) {
       throw new NotFoundException(`Acción con ID ${id} no encontrada`);
@@ -63,8 +114,22 @@ export class FlujoService {
 
   async updateAccion(id: number, updateDto: UpdateAccionDto): Promise<Accion> {
     const registro = await this.findOneAccion(id);
+    const { id_figura } = updateDto;
+
+    if (id_figura) {
+      const exist = await this.figuraRepository.findOne({
+        where: { id_figura },
+      });
+      if (!exist) {
+        throw new BadRequestException(
+          `Figura con ID ${id_figura} no encontrada`,
+        );
+      }
+    }
+
     Object.assign(registro, updateDto);
-    return await this.accionRepository.save(registro);
+    await this.accionRepository.save(registro);
+    return await this.findOneAccion(id);
   }
 
   async removeAccion(id: number): Promise<void> {
@@ -310,19 +375,20 @@ export class FlujoService {
     }
 
     const registro = this.tareaRepository.create(createDto);
-    return await this.tareaRepository.save(registro);
+    const saved = await this.tareaRepository.save(registro);
+    return await this.findOneTarea(saved.id_tarea);
   }
 
   async findAllTareas(): Promise<Tarea[]> {
     return await this.tareaRepository.find({
-      relations: ['actividad', 'accion'],
+      relations: ['actividad', 'accion', 'accion.figura'],
     });
   }
 
   async findOneTarea(id: number): Promise<Tarea> {
     const registro = await this.tareaRepository.findOne({
       where: { id_tarea: id },
-      relations: ['actividad', 'accion'],
+      relations: ['actividad', 'accion', 'accion.figura'],
     });
     if (!registro) {
       throw new NotFoundException(`Tarea con ID ${id} no encontrada`);
@@ -357,7 +423,8 @@ export class FlujoService {
     }
 
     Object.assign(registro, updateDto);
-    return await this.tareaRepository.save(registro);
+    await this.tareaRepository.save(registro);
+    return await this.findOneTarea(id);
   }
 
   async removeTarea(id: number): Promise<void> {
