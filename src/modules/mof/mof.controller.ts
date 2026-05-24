@@ -65,7 +65,9 @@ export class MofController {
     summary:
       'Sincroniza manualmente los datos del MOF a la base de datos local',
     description:
-      '⚠️ ADVERTENCIA: Este endpoint vacía la tabla "Unidad" (TRUNCATE CASCADE) y la repuebla con los datos más recientes del MOF.',
+      'Realiza un Upsert seguro: actualiza Unidades existentes y crea las nuevas. ' +
+      'Las unidades que ya no existen en el MOF quedan con soft-delete. ' +
+      'Las relaciones con procesos y procedimientos NO se ven afectadas.',
   })
   @ApiResponse({
     status: 201,
@@ -107,7 +109,10 @@ export class MofController {
   @ApiOperation({
     summary: 'Sincroniza todos los cargos desde el MOF',
     description:
-      'Limpia la tabla Cargo y repobla con datos obtenidos para cada unidad sincronizada. Este proceso puede tardar varios minutos debido al procesamiento por lotes para evitar saturar el API externo.',
+      'Realiza un Upsert seguro de Cargos por unidad. Actualiza los existentes, inserta los nuevos ' +
+      'y marca con soft-delete los que ya no vienen del MOF. ' +
+      'La tabla pivote unidad_cargos solo recibe inserciones nuevas (ON CONFLICT DO NOTHING). ' +
+      'Este proceso puede tardar varios minutos por el procesamiento en lotes.',
   })
   @ApiResponse({
     status: 201,
