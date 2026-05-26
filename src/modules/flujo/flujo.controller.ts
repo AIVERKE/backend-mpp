@@ -9,9 +9,22 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { FlujoService } from './flujo.service';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiNotFoundResponse,
+  ApiBadRequestResponse,
+  ApiNoContentResponse,
+} from '@nestjs/swagger';
 import { CreateAccionDto, UpdateAccionDto } from './dto/accion.dto';
+import { AccionResponseDto } from './dto/accion-response.dto';
 import { CreateFiguraDto, UpdateFiguraDto } from './dto/figura.dto';
+import { FiguraResponseDto } from './dto/figura-response.dto';
 import { CreateActividadDto, UpdateActividadDto } from './dto/actividad.dto';
 import { CreateOperacionDto, UpdateOperacionDto } from './dto/operacion.dto';
 import {
@@ -140,18 +153,30 @@ export class FlujoController {
   // --- Figuras ---
 
   @Post('figuras')
-  @ApiOperation({ summary: 'Crear una nueva figura' })
-  @ApiResponse({ status: 201, description: 'Figura creada exitosamente.' })
-  @ApiResponse({ status: 400, description: 'Datos inválidos.' })
+  @ApiOperation({
+    summary: 'Crear una nueva figura',
+    description:
+      'Registra una forma del catálogo de diagramas. El campo codigo es la clave estable que el frontend usa para renderizar (no depender del nombre de la acción).',
+  })
+  @ApiBody({ type: CreateFiguraDto })
+  @ApiCreatedResponse({
+    description: 'Figura creada exitosamente.',
+    type: FiguraResponseDto,
+  })
+  @ApiBadRequestResponse({ description: 'Datos inválidos o codigo duplicado.' })
   createFigura(@Body() createDto: CreateFiguraDto) {
     return this.service.createFigura(createDto);
   }
 
   @Get('figuras')
-  @ApiOperation({ summary: 'Listar todas las figuras' })
-  @ApiResponse({
-    status: 200,
+  @ApiOperation({
+    summary: 'Listar todas las figuras',
+    description: 'Catálogo completo de formas disponibles para asignar a acciones.',
+  })
+  @ApiOkResponse({
     description: 'Lista de figuras obtenida exitosamente.',
+    type: FiguraResponseDto,
+    isArray: true,
   })
   findAllFiguras() {
     return this.service.findAllFiguras();
@@ -160,8 +185,8 @@ export class FlujoController {
   @Get('figuras/:id')
   @ApiOperation({ summary: 'Obtener una figura por ID' })
   @ApiParam({ name: 'id', description: 'ID de la figura' })
-  @ApiResponse({ status: 200, description: 'Figura encontrada.' })
-  @ApiResponse({ status: 404, description: 'Figura no encontrada.' })
+  @ApiOkResponse({ description: 'Figura encontrada.', type: FiguraResponseDto })
+  @ApiNotFoundResponse({ description: 'Figura no encontrada.' })
   findOneFigura(@Param('id', ParseIntPipe) id: number) {
     return this.service.findOneFigura(id);
   }
@@ -169,8 +194,13 @@ export class FlujoController {
   @Patch('figuras/:id')
   @ApiOperation({ summary: 'Actualizar una figura por ID' })
   @ApiParam({ name: 'id', description: 'ID de la figura' })
-  @ApiResponse({ status: 200, description: 'Figura actualizada exitosamente.' })
-  @ApiResponse({ status: 404, description: 'Figura no encontrada.' })
+  @ApiBody({ type: UpdateFiguraDto })
+  @ApiOkResponse({
+    description: 'Figura actualizada exitosamente.',
+    type: FiguraResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Figura no encontrada.' })
+  @ApiBadRequestResponse({ description: 'Datos inválidos o codigo duplicado.' })
   updateFigura(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateDto: UpdateFiguraDto,
@@ -181,8 +211,8 @@ export class FlujoController {
   @Delete('figuras/:id')
   @ApiOperation({ summary: 'Eliminar una figura (Borrado lógico)' })
   @ApiParam({ name: 'id', description: 'ID de la figura' })
-  @ApiResponse({ status: 200, description: 'Figura eliminada exitosamente.' })
-  @ApiResponse({ status: 404, description: 'Figura no encontrada.' })
+  @ApiNoContentResponse({ description: 'Figura eliminada exitosamente.' })
+  @ApiNotFoundResponse({ description: 'Figura no encontrada.' })
   removeFigura(@Param('id', ParseIntPipe) id: number) {
     return this.service.removeFigura(id);
   }
@@ -190,18 +220,33 @@ export class FlujoController {
   // --- Acciones ---
 
   @Post('acciones')
-  @ApiOperation({ summary: 'Crear una nueva acción' })
-  @ApiResponse({ status: 201, description: 'Acción creada exitosamente.' })
-  @ApiResponse({ status: 400, description: 'Datos inválidos.' })
+  @ApiOperation({
+    summary: 'Crear una nueva acción',
+    description:
+      'Crea un tipo de paso vinculado a una figura del catálogo (id_figura). La respuesta incluye el objeto figura anidado.',
+  })
+  @ApiBody({ type: CreateAccionDto })
+  @ApiCreatedResponse({
+    description: 'Acción creada exitosamente.',
+    type: AccionResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Datos inválidos o figura referenciada no existe.',
+  })
   createAccion(@Body() createDto: CreateAccionDto) {
     return this.service.createAccion(createDto);
   }
 
   @Get('acciones')
-  @ApiOperation({ summary: 'Listar todas las acciones' })
-  @ApiResponse({
-    status: 200,
+  @ApiOperation({
+    summary: 'Listar todas las acciones',
+    description:
+      'Cada acción incluye su figura (codigo, nombre) para renderizar el diagrama sin hardcodear por nombre_accion.',
+  })
+  @ApiOkResponse({
     description: 'Lista de acciones obtenida exitosamente.',
+    type: AccionResponseDto,
+    isArray: true,
   })
   findAllAcciones() {
     return this.service.findAllAcciones();
@@ -210,8 +255,8 @@ export class FlujoController {
   @Get('acciones/:id')
   @ApiOperation({ summary: 'Obtener una acción por ID' })
   @ApiParam({ name: 'id', description: 'ID de la acción' })
-  @ApiResponse({ status: 200, description: 'Acción encontrada.' })
-  @ApiResponse({ status: 404, description: 'Acción no encontrada.' })
+  @ApiOkResponse({ description: 'Acción encontrada.', type: AccionResponseDto })
+  @ApiNotFoundResponse({ description: 'Acción no encontrada.' })
   findOneAccion(@Param('id', ParseIntPipe) id: number) {
     return this.service.findOneAccion(id);
   }
@@ -219,8 +264,15 @@ export class FlujoController {
   @Patch('acciones/:id')
   @ApiOperation({ summary: 'Actualizar una acción por ID' })
   @ApiParam({ name: 'id', description: 'ID de la acción' })
-  @ApiResponse({ status: 200, description: 'Acción actualizada exitosamente.' })
-  @ApiResponse({ status: 404, description: 'Acción no encontrada.' })
+  @ApiBody({ type: UpdateAccionDto })
+  @ApiOkResponse({
+    description: 'Acción actualizada exitosamente.',
+    type: AccionResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Acción no encontrada.' })
+  @ApiBadRequestResponse({
+    description: 'Datos inválidos o figura referenciada no existe.',
+  })
   updateAccion(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateDto: UpdateAccionDto,
@@ -231,8 +283,8 @@ export class FlujoController {
   @Delete('acciones/:id')
   @ApiOperation({ summary: 'Eliminar una acción (Borrado lógico)' })
   @ApiParam({ name: 'id', description: 'ID de la acción' })
-  @ApiResponse({ status: 200, description: 'Acción eliminada exitosamente.' })
-  @ApiResponse({ status: 404, description: 'Acción no encontrada.' })
+  @ApiNoContentResponse({ description: 'Acción eliminada exitosamente.' })
+  @ApiNotFoundResponse({ description: 'Acción no encontrada.' })
   removeAccion(@Param('id', ParseIntPipe) id: number) {
     return this.service.removeAccion(id);
   }

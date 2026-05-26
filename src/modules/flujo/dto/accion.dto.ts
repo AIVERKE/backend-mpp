@@ -12,7 +12,8 @@ export class CreateAccionDto {
   nombre_accion: string;
 
   @ApiProperty({
-    description: 'ID de la figura asociada a la acción',
+    description:
+      'ID de la figura del catálogo GET /flujo/figuras. Define qué forma visual tendrá esta acción en el diagrama.',
     example: 2,
   })
   id_figura: number;

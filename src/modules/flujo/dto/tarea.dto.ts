@@ -14,7 +14,8 @@ export class CreateTareaDto {
   id_accion: number;
 
   @ApiProperty({
-    description: 'Descripción de la tarea',
+    description:
+      'Descripción operativa o detallada de la tarea (documentación, no necesariamente el texto del nodo en el diagrama)',
     example: 'Firmar el documento de revisión',
     examples: {
       ejemplo1: { value: 'Firmar el documento de revisión' },
@@ -24,7 +25,8 @@ export class CreateTareaDto {
   descripcion: string;
 
   @ApiProperty({
-    description: 'Texto que se muestra dentro de la figura en el diagrama',
+    description:
+      'Texto corto que se muestra dentro de la figura en el diagrama. La forma visual viene de accion.figura.codigo.',
     example: 'Validar datos',
     examples: {
       ejemplo1: { value: 'Validar datos' },
